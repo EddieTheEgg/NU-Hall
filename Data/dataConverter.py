@@ -3,9 +3,9 @@ import pandas as pd
 from api_db import fetch_data  # Import the function from api-db.py
 
 #Test Cases
-location_name = "Stetson_West"
+location_name = "Stetson_East"
 period_name = "Lunch"
-date = '2024-12-5'
+date = '2024-12-6'
 
 # Fetch data from the API
 data = fetch_data(location_name, period_name, date)
