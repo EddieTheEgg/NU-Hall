@@ -37,7 +37,7 @@ if data is not None:
                 nutrient_value = nutrient["value"]
                 item_data[nutrient_name] = nutrient_value
 
-            item_data["Allergens"] = ", ".join([f["name"] for f in item["filters"] if f["type"] == "allergen"])
+            item_data["Allergens"] = ", ".join([f["name"] for f in item["filters"] if f["type"] == "label" or f["type"] == "allergen"])
 
             menu_items.append(item_data)
 
