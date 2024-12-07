@@ -3,22 +3,20 @@ package com.nudining.nudining_info.repository;
 import com.nudining.nudining_info.entities.Meal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Repository
 public interface MealRepository extends JpaRepository<Meal, Long> {
+  
+    @Query("SELECT m FROM Meal m WHERE m.period IN (:periods)")
+    ArrayList<Meal> findMealsByPeriods(@Param("periods") ArrayList<String> periods);
 
-    // Get unique meal periods (Breakfast, Lunch, Dinner)
-    @Query("SELECT DISTINCT m.period FROM Meal m")
-    List<String> findDistinctPeriods();
+    @Query("SELECT m from Meal m WHERE m.period IN (:periods) AND m.location IN (:locations) AND m.kitchen IN (:kitchens)")
+    ArrayList<Meal> findMealsByPeriodsLocationsKitchens(@Param ("periods")ArrayList<String> periods, @Param("locations") ArrayList<String> locations, @Param("kitchens") ArrayList<String> kitchens);
+    
 
-    // Get unique meal locations (e.g., Stetson East, Stetson West)
-    @Query("SELECT DISTINCT m.location FROM Meal m")
-    List<String> findDistinctLocations();
 
-    // Get unique meal kitchens (e.g., Homestyle, Rice Station)
-    @Query("SELECT DISTINCT m.kitchen FROM Meal m")
-    List<String> findDistinctKitchens();
 }
