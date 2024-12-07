@@ -6,26 +6,52 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.List;
+
 
 @Entity
 @Table(name = "daily_menu")
 public class Meal {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Primary Key
+    private Long id;
+    private String period;
+    private String location;
+    private String kitchen;
+    private String dishName;
+    private String description;
+    private String portion;             // Portion size of dish
+    private List<String> ingredients;   // List of Ingredients
+    private Float calories;           
+    private Float protein;              
+    private Float carbohydrates; 
+    private Float sugar;
+    private Float fat;
+    private Float saturated_fat;
+    private Float cholesterol;
+    private Float dietary_fiber;
+    private Float sodium;
+    private Float potassium;
+    private Float calcium;
+    private Float iron;
+    private Float trans_fat;
+    private Float vitamin_d;
+    private Float vitamin_c;
+    private Float calories_from_fat;
+    private Float vitamin_a;
+    private Float saturated_trans_fat;
+    private List<String> allergens;
 
-    private String period;      // Breakfast, Lunch, Dinner
-    private String location;    // Dining hall location (e.g., Stetson East, Stetson West)
-    private String kitchen;     // Kitchen category (e.g., Homestyle, Rice Station)
-    private String dishName;    // Name of the dish
-    private String description; // Description of the dish
-    private Integer calories;   // Nutritional details
-    private Integer protein;    // Protein in grams
-    private Integer carbs;      // Carbohydrates in grams
-    private Integer fat;        // Total fat in grams
+    // Custom constructor
+    public Meal(String period, String location, String kitchen, String dishName, String description) {
+        this.period = period;
+        this.location = location;
+        this.kitchen = kitchen;
+        this.dishName = dishName;
+        this.description = description;
+    }
 
-    // Getters and Setters (or use Lombok for brevity)
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -74,35 +100,171 @@ public class Meal {
         this.description = description;
     }
 
-    public Integer getCalories() {
+    public String getPortion() {
+        return portion;
+    }
+
+    public void setPortion(String portion) {
+        this.portion = portion;
+    }
+
+    public List<String> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<String> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public Float getCalories() {
         return calories;
     }
 
-    public void setCalories(Integer calories) {
+    public void setCalories(Float calories) {
         this.calories = calories;
     }
 
-    public Integer getProtein() {
+    public Float getProtein() {
         return protein;
     }
 
-    public void setProtein(Integer protein) {
+    public void setProtein(Float protein) {
         this.protein = protein;
     }
 
-    public Integer getCarbs() {
-        return carbs;
+    public Float getCarbohydrates() {
+        return carbohydrates;
     }
 
-    public void setCarbs(Integer carbs) {
-        this.carbs = carbs;
+    public void setCarbohydrates(Float carbohydrates) {
+        this.carbohydrates = carbohydrates;
     }
 
-    public Integer getFat() {
+    public Float getSugar() {
+        return sugar;
+    }
+
+    public void setSugar(Float sugar) {
+        this.sugar = sugar;
+    }
+
+    public Float getFat() {
         return fat;
     }
 
-    public void setFat(Integer fat) {
+    public void setFat(Float fat) {
         this.fat = fat;
+    }
+
+    public Float getSaturatedFat() {
+        return saturated_fat;
+    }
+
+    public void setSaturatedFat(Float saturated_fat) {
+        this.saturated_fat = saturated_fat;
+    }
+
+    public Float getCholesterol() {
+        return cholesterol;
+    }
+
+    public void setCholesterol(Float cholesterol) {
+        this.cholesterol = cholesterol;
+    }
+
+    public Float getDietaryFiber() {
+        return dietary_fiber;
+    }
+
+    public void setDietaryFiber(Float dietary_fiber) {
+        this.dietary_fiber = dietary_fiber;
+    }
+
+    public Float getSodium() {
+        return sodium;
+    }
+
+    public void setSodium(Float sodium) {
+        this.sodium = sodium;
+    }
+
+    public Float getPotassium() {
+        return potassium;
+    }
+
+    public void setPotassium(Float potassium) {
+        this.potassium = potassium;
+    }
+
+    public Float getCalcium() {
+        return calcium;
+    }
+
+    public void setCalcium(Float calcium) {
+        this.calcium = calcium;
+    }
+
+    public Float getIron() {
+        return iron;
+    }
+
+    public void setIron(Float iron) {
+        this.iron = iron;
+    }
+
+    public Float getTransFat() {
+        return trans_fat;
+    }
+
+    public void setTransFat(Float trans_fat) {
+        this.trans_fat = trans_fat;
+    }
+
+    public Float getVitaminD() {
+        return vitamin_d;
+    }
+
+    public void setVitaminD(Float vitamin_d) {
+        this.vitamin_d = vitamin_d;
+    }
+
+    public Float getVitaminC() {
+        return vitamin_c;
+    }
+
+    public void setVitaminC(Float vitamin_c) {
+        this.vitamin_c = vitamin_c;
+    }
+
+    public Float getCaloriesFromFat() {
+        return calories_from_fat;
+    }
+
+    public void setCaloriesFromFat(Float calories_from_fat) {
+        this.calories_from_fat = calories_from_fat;
+    }
+
+    public Float getVitaminA() {
+        return vitamin_a;
+    }
+
+    public void setVitaminA(Float vitamin_a) {
+        this.vitamin_a = vitamin_a;
+    }
+
+    public Float getSaturatedTransFat() {
+        return saturated_trans_fat;
+    }
+
+    public void setSaturatedTransFat(Float saturated_trans_fat) {
+        this.saturated_trans_fat = saturated_trans_fat;
+    }
+
+    public List<String> getAllergens() {
+        return allergens;
+    }
+
+    public void setAllergens(List<String> allergens) {
+        this.allergens = allergens;
     }
 }
