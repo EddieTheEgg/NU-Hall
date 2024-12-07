@@ -6,7 +6,7 @@ locations = ["Stetson_East", "Stetson_West", "IV"]
 periods = ["Breakfast", "Lunch", "Dinner"]
 
 # Test Cases
-date = '2024-12-7'
+date = '2024-12-5'
 
 # Combine all dining options into one CSV file
 all_menu_items = []  # List to hold all menu items
@@ -24,7 +24,8 @@ for location in locations:
                     kitchen_name = kitchen["name"]
                     for item in kitchen["items"]:
                         item_data = {
-                            "Location_Period": f"{location} {period}",
+                            "Location": location,
+                            "Period": period,   
                             "Kitchen": kitchen_name,
                             "Dish_Name": item["name"],
                             "Description": item["desc"],
