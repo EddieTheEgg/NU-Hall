@@ -1,14 +1,10 @@
 package com.nudining.nudining_info.entities;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.hibernate.annotations.ColumnTransformer;
 
-import java.util.List;
-
-import com.nudining.nudining_info.JsonConverter;
 
 
 @Entity
