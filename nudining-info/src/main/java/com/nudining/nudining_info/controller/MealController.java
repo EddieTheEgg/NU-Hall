@@ -16,6 +16,7 @@ public class MealController {
     @Autowired
     private MealService mealService;
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addUser")
     public User addUser(@RequestBody User user) {
                     
