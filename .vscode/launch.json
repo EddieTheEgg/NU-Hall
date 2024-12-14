@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-NuDiningApplication<nudining-info>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.nudining.nudining_info.NuDiningApplication",
+            "projectName": "nudining-info",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
