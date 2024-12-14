@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.hibernate.annotations.ColumnTransformer;
+
+import java.util.List;
+
 import com.nudining.nudining_info.JsonConverter;
 
 
@@ -25,11 +29,11 @@ public class User {
     private String password;
     
     @Column(name = "dietary_restrictions", columnDefinition = "jsonb")
-    @Convert(converter = JsonConverter.class)
+    @ColumnTransformer(write = "?::jsonb")
     private Map<String, Object> dietaryRestrictions;
 
     @Column(name="nutritional_focus", columnDefinition = "jsonb")
-    @Convert(converter = JsonConverter.class)
+    @ColumnTransformer(write = "?::jsonb")
     private Map<String, Object> nutritionalFocus;
     
     //Constructor(s)
