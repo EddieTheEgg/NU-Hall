@@ -2,40 +2,64 @@ package com.nudining.nudining_info.entities;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.Map;
+
+import com.nudining.nudining_info.JsonConverter;
+
 
 @Entity
-@Table(name = "northeasternUsers")
+@Table(name = "northeasternusers")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
+    
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    @ElementCollection
-    private ArrayList<String> dietaryRestrictions;
-    @ElementCollection
-    private ArrayList<Nutrition> nutritionalFocus;
+    @Column(name = "password", nullable = false)
     private String password;
+    
+    @Column(name = "dietary_restrictions", columnDefinition = "jsonb")
+    @Convert(converter = JsonConverter.class)
+    private Map<String, Object> dietaryRestrictions;
 
-    public User() {}
-
-    public User(String name, String password, ArrayList<String> dietaryRestrictions, ArrayList<Nutrition> nutritionalFocus) {
+    @Column(name="nutritional_focus", columnDefinition = "jsonb")
+    @Convert(converter = JsonConverter.class)
+    private Map<String, Object> nutritionalFocus;
+    
+    //Constructor(s)
+    public User(String name, String password, String email, Map<String, Object> dietaryRestrictions, Map<String, Object> nutritionalFocus) {
         this.name = name;
         this.password = password;
+        this.email = email;
         this.dietaryRestrictions = dietaryRestrictions;
         this.nutritionalFocus = nutritionalFocus;
     }
 
-    //Name: (String)
+    //Getters and Setters
+
+    //ID
+    public Long getID() {
+        return this.id;
+    }
+    public void setID(Long id){
+        this.id = id;
+    }
+
+    //Name
     public String getName() {
         return this.name;
     }
     public void setName(String newName) {
         this.name = newName;
     }
-
-    //Password: (String)
+    
+    //Password
     public String getPassword() {
         return this.password;
     }
@@ -43,23 +67,20 @@ public class User {
         this.password = password;
     }
 
-    //Dietary Restrictions: (List of Dietary Strings)
-    public ArrayList<String> getDietaryRestrictions(){
+    //Dietary Restrictions
+    public Map<String, Object> getDietaryRestrictions() {
         return this.dietaryRestrictions;
     }
-    public void addDietaryRestrictions(String newDietaryRestriction){
-        this.dietaryRestrictions.add(newDietaryRestriction);
-    }
-    public void removeDietaryRestrictions(String dietaryRestriction){
-        this.dietaryRestrictions.remove(dietaryRestriction);
+    public void setDietaryRestrictions(Map<String, Object> newDietaryRestrictions) {
+        this.dietaryRestrictions = newDietaryRestrictions;
     }
 
-    //User Nutritions: (List of Nutritions, which include the type of nutrition, and the range for each)
-    public ArrayList<Nutrition> getUserNutritions(){
+    //Nutrition Focus
+    public Map<String, Object> getNutritionalFocus() {
         return this.nutritionalFocus;
     }
-    public void setUserNutrition(Nutrition updatedNutrition){
-        
+    public void setNutritionalFocus(Map<String, Object> newNutritionalFocus){
+        this.nutritionalFocus = newNutritionalFocus;
     }
 
 
