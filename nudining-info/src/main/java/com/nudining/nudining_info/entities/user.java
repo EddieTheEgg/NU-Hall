@@ -1,15 +1,30 @@
 package com.nudining.nudining_info.entities;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 
+@Entity
+@Table(name = "northeasternUsers")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String name;
+
+    @ElementCollection
     private ArrayList<String> dietaryRestrictions;
-    private ArrayList<String> nutritionalFocus;
 
+    @ElementCollection
+    private ArrayList<Nutrition> nutritionalFocus;
 
-    public User(String name, ArrayList<String> dietaryRestrictions, ArrayList<String> nutritionalFocus){
+    private String password;
+
+    public User() {}
+
+    public User(String name, String password, ArrayList<String> dietaryRestrictions, ArrayList<Nutrition> nutritionalFocus) {
         this.name = name;
+        this.password = password;
         this.dietaryRestrictions = dietaryRestrictions;
         this.nutritionalFocus = nutritionalFocus;
     }
@@ -33,19 +48,15 @@ public class User {
         this.dietaryRestrictions.remove(dietaryRestriction);
     }
 
-    public ArrayList<String> getNutritionalTypes(){
-        return this.nutritionalFocus;
+
+
+    public String getPassword() {
+        return this.password;
     }
 
-    public void addNutritionalType(String nutritionalType){
-        this.nutritionalFocus.add(nutritionalType);
+    public void setPassword(String password) {
+        this.password = password;
     }
-
-    
-
-
-
-    
 }
 
 
