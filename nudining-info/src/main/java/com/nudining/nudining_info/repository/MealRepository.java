@@ -18,5 +18,5 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     ArrayList<Meal> findMealsByPeriodsLocationsKitchens(@Param ("periods")ArrayList<String> periods, @Param("locations") ArrayList<String> locations, @Param("kitchens") ArrayList<String> kitchens);
     
 
-
+    
 }
