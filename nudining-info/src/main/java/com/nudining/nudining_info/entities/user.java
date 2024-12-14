@@ -41,7 +41,7 @@ public class User {
         this.nutritionalFocus = nutritionalFocus;
     }
 
-    //Getters and Setters
+    //User Methods
 
     //ID
     public Long getID() {
