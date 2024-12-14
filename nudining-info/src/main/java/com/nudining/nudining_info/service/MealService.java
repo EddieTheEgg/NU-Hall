@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 public class MealService {
@@ -20,12 +21,51 @@ public class MealService {
     public ArrayList<Meal> generatePotentialMeals(User user, ArrayList<String> periods, ArrayList<String> locations, ArrayList<String> kitchens) {
         ArrayList<Meal> filteredMeals = mealRepository.findMealsByPeriodsLocationsKitchens(periods, locations, kitchens);
         
-        // Filter out meals that contain any of the user's allergens
-        filteredMeals.removeIf(meal -> meal.getAllergens().stream()
-            .anyMatch(allergen -> user.getDietaryRestrictions().contains(allergen)));
+        Map<String, Object> userDietaryRestrictions = user.getDietaryRestrictions();
+    
+        if (userDietaryRestrictions != null) {
+            // Extract restrictions
 
-        return filteredMeals; 
+            
+            List<String> allergies = (List<String>) userDietaryRestrictions.getOrDefault("allergies", new ArrayList<>());
+            List<String> proteinPreferences = (List<String>) userDietaryRestrictions.getOrDefault("proteinPreferences", new ArrayList<>());
+            List<String> lifestylePreferences = (List<String>) userDietaryRestrictions.getOrDefault("lifestylePreferences", new ArrayList<>());
+            List<String> unwantedIngredients = (List<String>) userDietaryRestrictions.getOrDefault("unwantedIngredients", new ArrayList<>());
+            
+            // Filter meals (Final filtering)
+            filteredMeals.removeIf(meal -> {
+
+                // Check Lifestyle Preferences (e.g., Vegetarian, Vegan)
+                if (!lifestylePreferences.isEmpty()) {
+                    for (String preference : lifestylePreferences) {
+                        if (!meal.getAllergens().contains(preference)) {
+                            return true; // Exclude if meal does not adhere to lifestyle preference
+                        }
+                    }
+                }
+                
+                // Check Allergens
+                if (allergies.stream().anyMatch(allergen -> meal.getAllergens().contains(allergen))) {
+                    return true; // Exclude meal if any allergen matches
+                }
+    
+                // Check Protein Preferences (avoid certain ingredients like 'Beef', 'Pork')
+                if (proteinPreferences.stream().anyMatch(preference -> meal.getIngredients().contains(preference))) {
+                    return true; // Exclude meal if any unwanted protein is found
+                }
+    
+                // Check Unwanted Ingredients
+                if (unwantedIngredients.stream().anyMatch(ingredient -> meal.getIngredients().contains(ingredient))) {
+                    return true; // Exclude meal if unwanted ingredient is found
+                }
+    
+                return false; 
+            });
+        }
+    
+        return filteredMeals;
     }
+    
 
     public List<Meal> getMealsByNutrientValues(Float maxCalories, Float minProtein) {
         // TODO Auto-generated method stub
