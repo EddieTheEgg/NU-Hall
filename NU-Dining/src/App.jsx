@@ -1,79 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import axios from 'axios';
+import UserLoginForm from "./components/UserLoginForm";
+import DietaryRestrictionsForm from "./components/DietaryRestrictionsForm";
+import NutritionalPreferencesForm from "./components/NutritionalPreferencesForm";
 
-const AddUserForm = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        password: '',
-        dietaryRestrictions: [],
-        nutritionalFocus: []
-    });
+const App = () => {
+    const [step, setStep] = useState(1);
+    const [userData, setUserData] = useState({});
 
-    // Handle form input changes
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+    const handleUserSubmit = (data) => {
+        setUserData((prev) => ({ ...prev, ...data }));
+        setStep(2);
     };
 
-    // Handle dietary restrictions (comma-separated input)
-    const handleDietaryRestrictionsChange = (e) => {
-        const value = e.target.value.split(',').map((item) => item.trim());
-        setFormData({ ...formData, dietaryRestrictions: value });
+    const handleDietarySubmit = (data) => {
+        setUserData((prev) => ({ ...prev, dietaryRestrictions: data }));
+        setStep(3);
     };
 
-    // Handle nutritional focus input (JSON format for simplicity)
-    const handleNutritionalFocusChange = (e) => {
-        try {
-            const jsonValue = JSON.parse(e.target.value);
-            setFormData({ ...formData, nutritionalFocus: jsonValue });
-        } catch (error) {
-            console.error("Invalid JSON format for nutritional focus");
-        }
+    const handleNutritionSubmit = (data) => { 
+        // Merge user data and send the request
+        const finalData = { ...userData, nutritionalPreferences: data };
+        console.log("Final User Data:", finalData); // Log the data being sent to the backend
+    
+        axios.post('http://localhost:8080/api/users/addUser', finalData, {
+            headers: {
+                'Content-Type': 'application/json',  // Ensure that the backend knows we're sending JSON
+            },
+        })
+        .then((response) => {
+            console.log('Success:', response.data);  // Handle successful response
+        })
+        .catch((error) => {
+            console.error('Error:', error);  // Handle any errors
+        });
     };
-
-    // Submit form data
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:8080/users/addUser', formData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log('User added successfully:', response.data);
-        } catch (error) {
-            console.error('Error adding user:', error);
-        }
-    };
+    
 
     return (
         <div>
-            <h2>Add New User</h2>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Name:
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-                </label>
-                <br />
-                <label>
-                    Password:
-                    <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-                </label>
-                <br />
-                <label>
-                    Dietary Restrictions (comma-separated):
-                    <input type="text" name="dietaryRestrictions" onChange={handleDietaryRestrictionsChange} />
-                </label>
-                <br />
-                <label>
-                    Nutritional Focus (JSON format):
-                    <textarea name="nutritionalFocus" onChange={handleNutritionalFocusChange} />
-                </label>
-                <br />
-                <button type="submit">Add User</button>
-            </form>
+            {step === 1 && <UserLoginForm onSubmit={handleUserSubmit} />}
+            {step === 2 && <DietaryRestrictionsForm onSubmit={handleDietarySubmit} />}
+            {step === 3 && <NutritionalPreferencesForm onSubmit={handleNutritionSubmit} />}
         </div>
     );
 };
 
-export default AddUserForm;
+export default App;
