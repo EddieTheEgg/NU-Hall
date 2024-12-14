@@ -27,9 +27,13 @@ public class MealService {
             // Extract restrictions
 
             
+            @SuppressWarnings("unchecked")
             List<String> allergies = (List<String>) userDietaryRestrictions.getOrDefault("allergies", new ArrayList<>());
+            @SuppressWarnings("unchecked")
             List<String> proteinPreferences = (List<String>) userDietaryRestrictions.getOrDefault("proteinPreferences", new ArrayList<>());
+            @SuppressWarnings("unchecked")
             List<String> lifestylePreferences = (List<String>) userDietaryRestrictions.getOrDefault("lifestylePreferences", new ArrayList<>());
+            @SuppressWarnings("unchecked")
             List<String> unwantedIngredients = (List<String>) userDietaryRestrictions.getOrDefault("unwantedIngredients", new ArrayList<>());
             
             // Filter meals (Final filtering)
