@@ -2,6 +2,7 @@ package com.nudining.nudining_info; // Ensure this is correct
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
