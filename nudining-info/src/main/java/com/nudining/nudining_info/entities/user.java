@@ -58,6 +58,14 @@ public class User {
     public void setName(String newName) {
         this.name = newName;
     }
+
+    //Email
+    public String getEmail(){
+        return this.email;
+    }
+    public void setEmail(String newEmail){
+        this.email = newEmail;
+    }
     
     //Password
     public String getPassword() {
