@@ -18,23 +18,28 @@ const App = () => {
         setStep(3);
     };
 
-    const handleNutritionSubmit = (data) => { 
-        // Merge user data and send the request
-        const finalData = { ...userData, nutritionalPreferences: data };
-        console.log("Final User Data:", finalData); // Log the data being sent to the backend
+    const handleNutritionSubmit = (data) => {
+ 
+        console.log('Nutritional Preferences to send:', data);
+        
+        const finalData = { ...userData, nutritionalFocus: data }; 
     
         axios.post('http://localhost:8080/api/users/addUser', finalData, {
             headers: {
-                'Content-Type': 'application/json',  // Ensure that the backend knows we're sending JSON
+                'Content-Type': 'application/json',
             },
         })
         .then((response) => {
-            console.log('Success:', response.data);  // Handle successful response
+            console.log('Success:', response.data);
+            setUserData({});
+            setStep(1);
         })
         .catch((error) => {
-            console.error('Error:', error);  // Handle any errors
+            console.error('Error:', error);
         });
     };
+    
+    
     
 
     return (
