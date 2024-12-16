@@ -2,7 +2,6 @@ package com.nudining.nudining_info.entities;
 
 
 import java.util.ArrayList;
-import java.util.Map;
 
 
 public class GenerateMealsRequest {

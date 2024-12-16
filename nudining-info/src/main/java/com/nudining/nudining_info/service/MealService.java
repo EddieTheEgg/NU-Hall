@@ -122,4 +122,16 @@ public class MealService {
         }
         return false; 
     }
+
+
+
+
+    private Meal generateRecommendedMeal(String period, String location, String kitchen, List<Meal> validPotentialMeals){
+        
+        
+        
+        
+        
+        return ...//Return some valid meal 
+    }
 } 

@@ -71,15 +71,16 @@ public class MealController {
             }
 
             // Generate potential meals based on the user's restrictions and preferences
-            List<Meal> meals = mealService.generatePotentialMeals(user, periods, locations, kitchens, dietaryRestrictions);
+            List<Meal> validPotentialMeals = mealService.generatePotentialMeals(user, periods, locations, kitchens, dietaryRestrictions);
             
             // Generate recommended meals based on the combination of periods, locations, and kitchens
+            //Might move all this into geenrateRecomendMeal inside mealService instead!!!
             List<Meal> recommendedMeals = new ArrayList<>();
             for (String period : periods) {
                 for (String location : locations) {
                     for (String kitchen : kitchens) {
                         // Select a recommended meal for this combination
-                        Meal recommendedMeal = mealService.generateRecommendedMeal(period, location, kitchen, meals);
+                        Meal recommendedMeal = mealService.generateRecommendedMeal(period, location, kitchen, validPotentialMeals);
                         recommendedMeals.add(recommendedMeal);
                     }
                 }
