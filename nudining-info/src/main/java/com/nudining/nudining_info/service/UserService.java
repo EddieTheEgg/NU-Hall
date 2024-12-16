@@ -4,6 +4,7 @@ import com.nudining.nudining_info.entities.User;
 import com.nudining.nudining_info.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.nudining.nudining_info.entities.Range;
 
 import java.util.Optional; //This is like a container object, so we can return empty or not, and also retrieve temp values/objects within
 import java.util.Map;
@@ -54,7 +55,7 @@ public class UserService {
     }
 
      //Update Nutritional Focus
-     public User updateNutritionalFocus(Long id, Map<String, Object> newNutritionalFocus) {
+     public User updateNutritionalFocus(Long id, Map<String, Range> newNutritionalFocus) {
         Optional<User> targetUser = userRepository.findById(id);
         if (targetUser.isPresent()) {
             User user = targetUser.get(); 
