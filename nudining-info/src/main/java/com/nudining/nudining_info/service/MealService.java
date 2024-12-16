@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 import java.util.Map;
 
 @Service
@@ -18,75 +18,108 @@ public class MealService {
     @Autowired
     private MealRepository mealRepository;
 
-    public ArrayList<Meal> generatePotentialMeals(User user, ArrayList<String> periods, ArrayList<String> locations, ArrayList<String> kitchens) {
-        ArrayList<Meal> filteredMeals = mealRepository.findMealsByPeriodsLocationsKitchens(periods, locations, kitchens);
-        
+    //Main Function: Generates valid potential meals
+    public List<Meal> generatePotentialMeals(User user, ArrayList<String> periods, ArrayList<String> locations, ArrayList<String> kitchens, Map<String, Object> dietaryRestrictions) {
+   
+        List<Meal> potentialValidMeals = mealRepository.findMealsByPeriodsLocationsKitchens(periods, locations, kitchens);
+
+        // Apply dietary restrictions if available
         Map<String, Object> userDietaryRestrictions = user.getDietaryRestrictions();
-    
         if (userDietaryRestrictions != null) {
-            // Extract restrictions
+            filterMealsByDietaryRestrictions(potentialValidMeals, userDietaryRestrictions);
+        }
 
-            
-            @SuppressWarnings("unchecked")
-            List<String> allergies = (List<String>) userDietaryRestrictions.getOrDefault("allergies", new ArrayList<>());
-            @SuppressWarnings("unchecked")
-            List<String> proteinPreferences = (List<String>) userDietaryRestrictions.getOrDefault("proteinPreferences", new ArrayList<>());
-            @SuppressWarnings("unchecked")
-            List<String> lifestylePreferences = (List<String>) userDietaryRestrictions.getOrDefault("lifestylePreferences", new ArrayList<>());
-            @SuppressWarnings("unchecked")
-            List<String> unwantedIngredients = (List<String>) userDietaryRestrictions.getOrDefault("unwantedIngredients", new ArrayList<>());
-            
-            // Filter meals (Final filtering)
-            filteredMeals.removeIf(meal -> {
+        return potentialValidMeals;
+    }
 
-                // Check Lifestyle Preferences (e.g., Vegetarian, Vegan)
-                if (!lifestylePreferences.isEmpty()) {
-                    for (String preference : lifestylePreferences) {
-                        if (!meal.getAllergens().contains(preference)) {
-                            return true; // Exclude if meal does not adhere to lifestyle preference
-                        }
-                    }
-                }
-                
-                // Check Allergens
-                if (allergies.stream().anyMatch(allergen -> meal.getAllergens().contains(allergen))) {
-                    return true; // Exclude meal if any allergen matches
-                }
-    
-                // Check Protein Preferences (avoid certain ingredients like 'Beef', 'Pork')
-                if (proteinPreferences.stream().anyMatch(preference -> meal.getIngredients().contains(preference))) {
-                    return true; // Exclude meal if any unwanted protein is found
-                }
-    
-                // Check Unwanted Ingredients
-                if (unwantedIngredients.stream().anyMatch(ingredient -> meal.getIngredients().contains(ingredient))) {
-                    return true; // Exclude meal if unwanted ingredient is found
-                }
-    
-                return false; 
-            });
+
+    private void filterMealsByDietaryRestrictions(List<Meal> potentialMeals, Map<String, Object> dietaryRestrictions) {
+        @SuppressWarnings("unchecked")
+        List<String> allergies = (List<String>) dietaryRestrictions.getOrDefault("allergies", new ArrayList<>());
+        @SuppressWarnings("unchecked")
+        List<String> proteinPreferences = (List<String>) dietaryRestrictions.getOrDefault("proteinPreferences", new ArrayList<>());
+        @SuppressWarnings("unchecked")
+        List<String> lifestylePreferences = (List<String>) dietaryRestrictions.getOrDefault("lifestylePreferences", new ArrayList<>());
+        @SuppressWarnings("unchecked")
+        List<String> unwantedIngredients = (List<String>) dietaryRestrictions.getOrDefault("unwantedIngredients", new ArrayList<>());
+
+        potentialMeals.removeIf(meal -> 
+            matchesLifestylePreferences(meal, lifestylePreferences) ||
+            containsAllergens(meal, allergies) ||
+            containsUnwantedProtein(meal, proteinPreferences) ||
+            containsUnwantedIngredients(meal, unwantedIngredients)
+        );
+    }
+
+
+    // Helper Functions for filterMealsByDietaryRestrictions
+
+    //Return true if meal is invalid, Return false if meal is valid
+    private boolean matchesLifestylePreferences(Meal meal, List<String> userLifestylePreferences) {
+        if (userLifestylePreferences.isEmpty()) {
+            return false; 
+        }
+
+        for (String userLifestylePreference : userLifestylePreferences) {
+            if (meal.getAllergens().contains(userLifestylePreference)) {
+                return false; // Keep the meal if it matches the user's preference (Vegan, Vegetarian)
+            }
+        }
+        
+        return true;
+    }
+   
+    private boolean containsAllergens(Meal meal, List<String> userAllergens) {
+        if (userAllergens.isEmpty()) {
+            return false;
+        }
+
+        //Convert's a meal's allergy (String type -> List) for gluten handling
+        List<String> mealAllergens = Arrays.asList(meal.getAllergens().split(","));
+
+        for (String userAllergen : userAllergens) {
+            // Special gluten handling
+            if ("Gluten".equals(userAllergen) && mealAllergens.contains("Gluten")) {
+                return true; 
+            }
+            if ("Gluten".equals(userAllergen) && mealAllergens.contains("Avoiding Gluten")) {
+                return false;
+            }
+            if (meal.getAllergens().contains(userAllergen)) {
+                return true; 
+            }
+        }
+        return false; 
+    }
+
+
+    private boolean containsUnwantedProtein(Meal meal, List<String> userUnwantedProteins) {
+        if (userUnwantedProteins.isEmpty()) {
+            return false;
         }
     
-        return filteredMeals;
-    }
+        List<String> mealIngredients = Arrays.asList(meal.getIngredients().split(","));
     
-
-    public List<Meal> getMealsByNutrientValues(Float maxCalories, Float minProtein) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMealsByNutrientValues'");
+        for (String userUnwantedProtein : userUnwantedProteins) {
+            if (mealIngredients.contains(userUnwantedProtein)) {
+                return true;
+            }
+        }
+        return false; 
     }
 
-    public List<Meal> getMealsByLocationAndPeriod(String location, String period) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMealsByLocationAndPeriod'");
-    }
-
-    public List<Meal> recommendMealsBasedOnNutritionalValues(User user, ArrayList<Meal> potentialMeals, Float maxCalories, Float maxFat, Float minVitaminD) {
-        // Filter meals based on user nutritional preferences
-        return potentialMeals.stream()
-            .filter(meal -> (maxCalories == null || meal.getCalories() <= maxCalories) &&
-                            (maxFat == null || meal.getFat() <= maxFat) &&
-                            (minVitaminD == null || meal.getVitaminD() >= minVitaminD))
-            .collect(Collectors.toList());
+    private boolean containsUnwantedIngredients(Meal meal, List<String> userUnwantedIngredients) {
+        if (userUnwantedIngredients.isEmpty()) {
+            return false;
+        }
+    
+        List<String> mealIngredients = Arrays.asList(meal.getIngredients().split(","));
+    
+        for (String userUnwantedIngredient : userUnwantedIngredients) {
+            if (mealIngredients.contains(userUnwantedIngredient)) {
+                return true; // 
+            }
+        }
+        return false; 
     }
 } 
