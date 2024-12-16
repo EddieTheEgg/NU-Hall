@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.util.List;
 
 
 @Entity
@@ -15,13 +14,14 @@ public class Meal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String period;
+    
     private String location;
+    private String period;
     private String kitchen;
     private String dishName;
     private String description;
-    private String portion;             // Portion size of dish
-    private List<String> ingredients;   // List of Ingredients
+    private String portion;       // Portion size of dish
+    private String ingredients;   // List of Ingredients
     private Float calories;           
     private Float protein;              
     private Float carbohydrates; 
@@ -40,7 +40,7 @@ public class Meal {
     private Float calories_from_fat;
     private Float vitamin_a;
     private Float saturated_trans_fat;
-    private List<String> allergens;
+    private String allergens;
 
     // Custom constructor
     public Meal(String period, String location, String kitchen, String dishName, String description) {
@@ -108,11 +108,11 @@ public class Meal {
         this.portion = portion;
     }
 
-    public List<String> getIngredients() {
+    public String getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<String> ingredients) {
+    public void setIngredients(String ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -260,11 +260,11 @@ public class Meal {
         this.saturated_trans_fat = saturated_trans_fat;
     }
 
-    public List<String> getAllergens() {
+    public String getAllergens() {
         return allergens;
     }
 
-    public void setAllergens(List<String> allergens) {
+    public void setAllergens(String allergens) {
         this.allergens = allergens;
     }
 }
