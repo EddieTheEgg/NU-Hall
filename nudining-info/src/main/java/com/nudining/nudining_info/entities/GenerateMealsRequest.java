@@ -51,20 +51,6 @@ public class GenerateMealsRequest {
     public void setKitchesn(ArrayList<String> newKitchens){
         this.kitchens = newKitchens;
     }
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
 }
 
 
