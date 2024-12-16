@@ -1,8 +1,8 @@
 package com.nudining.nudining_info.entities;
 
+
 import jakarta.persistence.*;
 import java.util.Map;
-
 import org.hibernate.annotations.ColumnTransformer;
 
 
@@ -30,10 +30,10 @@ public class User {
 
     @Column(name="nutritional_focus", columnDefinition = "jsonb")
     @ColumnTransformer(write = "?::jsonb")
-    private Map<String, Object> nutritionalFocus;
+    private Map<String, Range> nutritionalFocus;
     
     //Constructor(s)
-    public User(String name, String password, String email, Map<String, Object> dietaryRestrictions, Map<String, Object> nutritionalFocus) {
+    public User(String name, String password, String email, Map<String, Object> dietaryRestrictions, Map<String, Range> nutritionalFocus) {
         this.name = name;
         this.password = password;
         this.email = email;
@@ -84,14 +84,14 @@ public class User {
     }
 
     //Nutrition Focus
-    public Map<String, Object> getNutritionalFocus() {
+    public Map<String, Range> getNutritionalFocus() {
         return this.nutritionalFocus;
     }
-    public void setNutritionalFocus(Map<String, Object> newNutritionalFocus){
+    public void setNutritionalFocus(Map<String, Range> newNutritionalFocus){
         this.nutritionalFocus = newNutritionalFocus;
     }
 
-
+    
 }
 
 
