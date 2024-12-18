@@ -33,6 +33,10 @@ public class User {
     private Map<String, Range> nutritionalFocus;
     
     //Constructor(s)
+
+    public User() {
+    }
+    
     public User(String name, String password, String email, Map<String, Object> dietaryRestrictions, Map<String, Range> nutritionalFocus) {
         this.name = name;
         this.password = password;

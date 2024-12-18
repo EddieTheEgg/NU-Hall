@@ -6,8 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-
-
 @Entity
 @Table(name = "daily_menu")
 public class Meal {
@@ -41,6 +39,10 @@ public class Meal {
     private Float vitamin_a;
     private Float saturated_trans_fat;
     private String allergens;
+
+    // Default constructor
+    public Meal() {
+    }
 
     // Custom constructor
     public Meal(String period, String location, String kitchen, String dishName, String description) {
