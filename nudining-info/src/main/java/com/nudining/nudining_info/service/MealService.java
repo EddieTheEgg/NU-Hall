@@ -21,13 +21,28 @@ public class MealService {
     //Main Function: Generates valid potential meals
     public List<Meal> generatePotentialMeals(User user, ArrayList<String> periods, ArrayList<String> locations, ArrayList<String> kitchens, Map<String, Object> dietaryRestrictions) {
    
+        System.out.println("Periods: " + periods);
+        System.out.println("Locations: " + locations);
+        System.out.println("Kitchens: " + kitchens);
+
         List<Meal> potentialValidMeals = mealRepository.findMealsByPeriodsLocationsKitchens(periods, locations, kitchens);
+        System.out.println("Potential valid meals: " + potentialValidMeals.size());
+        for (Meal meal : potentialValidMeals) {
+            System.out.println("Meal Name: " + meal.getPeriod() + " " + meal.getDishName()); // Assuming Meal has a getName() method
+        }
 
         // Apply dietary restrictions if available
         Map<String, Object> userDietaryRestrictions = user.getDietaryRestrictions();
         if (userDietaryRestrictions != null) {
             filterMealsByDietaryRestrictions(potentialValidMeals, userDietaryRestrictions);
         }
+
+        System.out.println("Potential valid meals AFTER filtering: " + potentialValidMeals.size());
+        for (Meal meal : potentialValidMeals) {
+            System.out.println("Meal Name: " + meal.getPeriod() + " " + meal.getDishName()); // Assuming Meal has a getName() method
+        }
+
+
 
         return potentialValidMeals;
     }
@@ -74,18 +89,23 @@ public class MealService {
             return false;
         }
 
-        //Convert's a meal's allergy (String type -> List) for gluten handling
+        // Convert a meal's allergy (String type -> List) for gluten handling
         List<String> mealAllergens = Arrays.asList(meal.getAllergens().split(","));
 
         for (String userAllergen : userAllergens) {
             // Special gluten handling
-            if ("Gluten".equals(userAllergen) && mealAllergens.contains("Gluten")) {
-                return true; 
+            if ("Gluten".equals(userAllergen)) {
+                // If the meal contains "Gluten", return true (filter out)
+                if (mealAllergens.contains("Gluten")) {
+                    return true; 
+                }
+                // If the meal states "Avoiding Gluten", do not filter out
+                if (mealAllergens.contains("Avoiding Gluten")) {
+                    continue; // Skip this allergen check
+                }
             }
-            if ("Gluten".equals(userAllergen) && mealAllergens.contains("Avoiding Gluten")) {
-                return false;
-            }
-            if (meal.getAllergens().contains(userAllergen)) {
+            // Check for other allergens
+            if (mealAllergens.contains(userAllergen)) {
                 return true; 
             }
         }
@@ -125,8 +145,9 @@ public class MealService {
 
 
 
-
-    private Meal generateRecommendedMeal(String period, String location, String kitchen, List<Meal> validPotentialMeals){
+    /*
+     * 
+     *   private Meal generateRecommendedMeal(String period, String location, String kitchen, List<Meal> validPotentialMeals){
         
         
         
@@ -134,4 +155,6 @@ public class MealService {
         
         return ...//Return some valid meal 
     }
+     */
+  
 } 
