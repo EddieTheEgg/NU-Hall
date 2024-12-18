@@ -23,12 +23,12 @@ public class MealController {
 
     //Purpose:
      //Actual valid list of meals we can use so later user can add these dishes in if they dont like the recommendation
-    @PostMapping("/generatePotentialMeals")
+     @CrossOrigin(origins = "http://localhost:5173")
+     @PostMapping("/generatePotentialMeals")
     public ResponseEntity<List<Meal>> generatePotentialmeals(@RequestBody GenerateMealsRequest request){
         try{
             //Extract the JSON-> Java information from the inputted request
             User user = request.getUser();
-            Map<String, Range> nutritionalFocus = user.getNutritionalFocus(); // Get nutritional focus
             Map<String, Object> dietaryRestrictions = user.getDietaryRestrictions(); // Get dietary restrictions
 
             //Extract other temporary fields not saved to database but currently selected by user
@@ -52,6 +52,9 @@ public class MealController {
 
     // Purpose:
     // Generate a list of recommended meals for each period, location, and kitchen.
+    /*
+     * 
+     
     @PostMapping("/generateRecommendedMeals")
     public ResponseEntity<List<Meal>> generateRecommendedMeals(@RequestBody GenerateMealsRequest request) {
         try {
@@ -78,11 +81,10 @@ public class MealController {
             List<Meal> recommendedMeals = new ArrayList<>();
             for (String period : periods) {
                 for (String location : locations) {
-                    for (String kitchen : kitchens) {
                         // Select a recommended meal for this combination
-                        Meal recommendedMeal = mealService.generateRecommendedMeal(period, location, kitchen, validPotentialMeals);
+                        Meal recommendedMeal = mealService.generateRecommendedMeal(period, location, validPotentialMeals);
                         recommendedMeals.add(recommendedMeal);
-                    }
+                    
                 }
             }
 
@@ -94,5 +96,5 @@ public class MealController {
         }
     }
 
-    
+    */
 }
