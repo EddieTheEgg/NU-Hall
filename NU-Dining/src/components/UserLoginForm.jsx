@@ -2,31 +2,19 @@ import React, { useState } from "react";
 
 const UserLoginForm = ({ onSubmit }) => {
     const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
+    const [name, setName] = useState(""); // For sign-up
+    const [isNewUser, setIsNewUser] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({ email, name, password });
+        onSubmit({ name, email, password, isNewUser });
     };
 
     return (
-        <div>
-            <h2>Welcome!</h2>
-            <p>
-                Well hi <strong>{name || "[Insert name]"}</strong>, I’m excited to be your personal food assistant at Northeastern!
-            </p>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Email:
-                    <input
-                        type="text"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </label>
-                <br />
+        <form onSubmit={handleSubmit}>
+            <h2>{isNewUser ? "Sign Up" : "Log In"}</h2>
+            {isNewUser && (
                 <label>
                     Name:
                     <input
@@ -36,20 +24,32 @@ const UserLoginForm = ({ onSubmit }) => {
                         required
                     />
                 </label>
-                <br />
-                <label>
-                    Password:
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </label>
-                <br />
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+            )}
+            <label>
+                Email:
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+            </label>
+            <label>
+                Password:
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+            </label>
+            <button type="submit">{isNewUser ? "Sign Up" : "Log In"}</button>
+            <div>
+                <button type="button" onClick={() => setIsNewUser(!isNewUser)}>
+                    {isNewUser ? "Already have an account? Log In" : "New user? Sign Up"}
+                </button>
+            </div>
+        </form>
     );
 };
 
