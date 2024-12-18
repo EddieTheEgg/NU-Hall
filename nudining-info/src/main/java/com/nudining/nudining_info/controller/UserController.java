@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/users") // Changed to /users for clarity
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -23,12 +23,19 @@ public class UserController {
     }
     
     //Find user by ID
-    @GetMapping("/getUser/{id}")
+    @GetMapping("/getUserById/{id}")
+    @CrossOrigin(origins = "http://localhost:5173")
     public User getUserById(@PathVariable Long id){
         return userService.findUserByID(id)
             .orElseThrow(() -> new RuntimeException("User not found with given id"));
     }
 
-
+    //Find user by email
+    @GetMapping("/getUserByEmail/{email}")
+    @CrossOrigin(origins = "http://localhost:5173")
+    public User getUserByEmail(@PathVariable String email) {
+        return userService.findUserByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found with given email"));
+    }
 
 } 
