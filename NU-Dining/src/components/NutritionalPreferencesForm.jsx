@@ -55,7 +55,7 @@ const NutritionalPreferencesForm = ({ onSubmit }) => {
     return (
         <form onSubmit={handleSubmit}>
             <h2>Nutritional Preferences</h2>
-            <p>Select the nutritional preferences you want to specify a range for:</p>
+            <p>Select the nutritional preferences you want to specify a range for: These will be your daily goals for 3 meals. You can always edit later.</p>
 
             {nutrients.map((nutrient) => (
                 <div key={nutrient}>

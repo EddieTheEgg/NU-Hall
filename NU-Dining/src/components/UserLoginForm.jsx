@@ -1,55 +1,57 @@
 import React, { useState } from "react";
+import { FaUser, FaLock } from "react-icons/fa";
+import "../styles/loginform.css"; 
 
 const UserLoginForm = ({ onSubmit }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setName] = useState(""); // For sign-up
-    const [isNewUser, setIsNewUser] = useState(false);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({ name, email, password, isNewUser });
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        onSubmit({ email, password });
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>{isNewUser ? "Sign Up" : "Log In"}</h2>
-            {isNewUser && (
-                <label>
-                    Name:
+        <div className="login-container">
+            <form onSubmit={handleSubmit} className="login-form">
+                <h2>Login</h2>
+                <div className="input-box">
                     <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                     />
-                </label>
-            )}
-            <label>
-                Email:
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-            </label>
-            <label>
-                Password:
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-            </label>
-            <button type="submit">{isNewUser ? "Sign Up" : "Log In"}</button>
-            <div>
-                <button type="button" onClick={() => setIsNewUser(!isNewUser)}>
-                    {isNewUser ? "Already have an account? Log In" : "New user? Sign Up"}
-                </button>
-            </div>
-        </form>
+                    <FaUser className="icon" />
+                </div>
+                <div className="input-box">
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <FaLock className="icon" />
+                </div>
+                <div className="remember-forgot">
+                    <label>
+                        <input type="checkbox" />
+                        Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                
+                <button className = "login-button" type="submit">Login</button>
+                
+                <div className="register-link">
+                    <p>Don't have an account? 
+                        <a href="#"> Register</a>
+                    </p>
+                </div>
+            </form>
+        </div>
     );
 };
 

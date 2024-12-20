@@ -105,7 +105,7 @@ const App = () => {
 
     return (
         <div>
-            {step === 1 && <UserLoginForm onSubmit={handleUserSubmit} />}
+            {step === 1 && <UserLoginForm className="loginForm" onSubmit={handleUserSubmit} />}
             {step === 2 && isNewUser && <DietaryRestrictionsForm onSubmit={handleDietarySubmit} />}
             {step === 3 && isNewUser && <NutritionalPreferencesForm onSubmit={handleNutritionSubmit} />}
             {step === 4 && <MealPreferencesForm onSubmit={handleMealPreferencesSubmit} />}
