@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -19,9 +18,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
     //User Methods:
 
@@ -52,15 +48,24 @@ public class UserController {
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<String> login(@RequestBody UserLoginRequest loginRequest) {
-        Optional<User> user = userService.findUserByEmail(loginRequest.getEmail());
+        String email = loginRequest.getEmail().trim();
+        String password = loginRequest.getPassword().trim();
         
-        if (user.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
-            // Return success response
-            return ResponseEntity.ok("Login successful");
-        } else {
-            // Return failure response
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password mismatch");
+        Optional<User> user = userService.findUserByEmail(email);
+        
+        if (user.isPresent()) {
+            System.out.println("User found: " + user.get().getEmail());
+            System.out.println("Input password: " + password);
+            System.out.println("Stored password: " + user.get().getPassword());
+            System.out.println(user.get().getPassword().equals(password));
+
+            if (user.get().getPassword().equals(password)) {
+                // Return success response
+                return ResponseEntity.ok("Login successful");
+            }
         }
+        // Return failure response
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password mismatch");
     }
 
 } 
