@@ -13,23 +13,23 @@ body{
 }
 
 .login-container {
-    height: 100vh; /* Full viewport height */
+    height: 100vh; 
     width: 100vw;
     padding: 20px;
 }
 
-/* NU-Dining/src/styles/loginform.css */
 .login-form {
-    width: 100%; /* Make the form take the full width of the container */
-    max-width: 600px; /* Set a maximum width for the form */
+    width: 100%; 
+    max-width: 600px;
     padding: 20px;
-    border: 1px solid #ccc; /* Add a border */
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional shadow */
-    margin: 0 auto; /* Center the form horizontally */
-    position: relative; /* Position relative for vertical centering */
-    top: 50%; /* Move down 50% of the viewport height */
-    transform: translateY(-50%); /* Adjust back up by half its height */
+    border: 0.5px solid #ffffff; 
+    border-radius: 15px; 
+    margin: 0 auto; 
+    position: relative; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 .login-container h2{
@@ -50,7 +50,7 @@ body{
     background: transparent;
     border: none;
     outline: none;
-    border: 1px solid white;
+    border: 0.8px solid white;
     border-radius: 15px;
     font-size: 0.9rem;
     color: white;
