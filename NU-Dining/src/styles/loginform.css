@@ -54,7 +54,7 @@ body{
     border-radius: 15px;
     font-size: 0.9rem;
     color: white;
-    padding-left: 10px;
+    padding-left: 1.8rem;
 }
 
 .input-box input::placeholder {
@@ -63,8 +63,8 @@ body{
 
 .input-box .icon{
     position: absolute;
-    right: 10px;
-    top: 55%;
+    left: 8px;
+    top: 53%;
     transform: translateY(-55%);
     font-size: 1rem;
 }
