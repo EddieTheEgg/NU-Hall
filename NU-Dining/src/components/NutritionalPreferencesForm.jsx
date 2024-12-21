@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+import { useSignup } from '../context/SignupContext.jsx'; // Assuming you have a context for managing signup data
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const NutritionalPreferencesForm = ({ onSubmit }) => {
-    // State to manage selected nutrition preferences and their ranges
+const NutritionalPreferencesForm = () => {
+    const { signupData, setSignupData } = useSignup();
     const [nutrition, setNutrition] = useState({});
+    const navigate = useNavigate();
+
     const nutrients = [
         "Calories",
         "Protein (g)",
@@ -38,10 +43,10 @@ const NutritionalPreferencesForm = ({ onSubmit }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formattedNutrition = Object.entries(nutrition)
-            .filter(([_, value]) => value) // Only include selected nutrients
+            .filter(([_, value]) => value)
             .reduce(
                 (acc, [key, value]) => ({
                     ...acc,
@@ -49,54 +54,47 @@ const NutritionalPreferencesForm = ({ onSubmit }) => {
                 }),
                 {}
             );
-        onSubmit(formattedNutrition);
+
+        // Combine all data and send to backend
+        const finalData = {
+            ...signupData,
+            nutritionalPreferences: formattedNutrition,
+        };
+
+        try {
+            await axios.post("http://localhost:8080/api/users/signup", finalData);
+            navigate('/home'); // Navigate to home page after successful signup
+        } catch (error) {
+            console.error("Signup error:", error);
+            // Handle error (e.g., show a message)
+        }
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Nutritional Preferences</h2>
-            <p>Select the nutritional preferences you want to specify a range for: These will be your daily goals for 3 meals. You can always edit later.</p>
+            <h2>Alrighty! Let’s move on to your nutritional preferences.</h2>
+            <p>Choose the nutritional information that applies to you, and provide a numerical value (min input and max input) is considered your daily goal for them!</p>
 
             {nutrients.map((nutrient) => (
                 <div key={nutrient}>
                     <label>
+                        {nutrient}:
                         <input
-                            type="checkbox"
-                            onChange={() => handleCheckboxChange(nutrient)}
-                            checked={!!nutrition[nutrient]}
+                            type="number"
+                            placeholder="Min"
+                            value={nutrition[nutrient]?.min || ""}
+                            onChange={(e) => handleRangeChange(nutrient, "min", e.target.value)}
                         />
-                        {nutrient}
+                        <input
+                            type="number"
+                            placeholder="Max"
+                            value={nutrition[nutrient]?.max || ""}
+                            onChange={(e) => handleRangeChange(nutrient, "max", e.target.value)}
+                        />
                     </label>
-                    {nutrition[nutrient] && (
-                        <div style={{ marginLeft: "20px", marginTop: "10px" }}>
-                            <label>
-                                Min:
-                                <input
-                                    type="number"
-                                    value={nutrition[nutrient].min}
-                                    onChange={(e) =>
-                                        handleRangeChange(nutrient, "min", e.target.value)
-                                    }
-                                    placeholder="Min value"
-                                />
-                            </label>
-                            <label style={{ marginLeft: "10px" }}>
-                                Max:
-                                <input
-                                    type="number"
-                                    value={nutrition[nutrient].max}
-                                    onChange={(e) =>
-                                        handleRangeChange(nutrient, "max", e.target.value)
-                                    }
-                                    placeholder="Max value"
-                                />
-                            </label>
-                        </div>
-                    )}
                 </div>
             ))}
 
-            <br />
             <button type="submit">Submit</button>
         </form>
     );

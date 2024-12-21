@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
 import "../styles/loginform.css"; 
 
-const UserLoginForm = ({ onSubmit }) => {
+const UserLoginForm = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState(""); 
@@ -18,7 +20,7 @@ const UserLoginForm = ({ onSubmit }) => {
 
             if (response.data === "Login successful") {
                 setErrorMessage(""); // Clear any previous error message
-                onSubmit({ email, password }); 
+                navigate('/home'); // Navigate to the home page
             } else {
                 setErrorMessage("Email or password mismatch."); 
             }
@@ -30,6 +32,10 @@ const UserLoginForm = ({ onSubmit }) => {
                 setErrorMessage("An error occurred. Please try again."); 
             }
         }
+    };
+
+    const handleSignUp = () => {
+        navigate('/signup'); // Navigate to the signup page
     };
 
     return (
@@ -69,7 +75,7 @@ const UserLoginForm = ({ onSubmit }) => {
                 
                 <div className="register-link">
                     <p>Don't have an account? 
-                        <a href="#"> Sign Up!</a>
+                        <a onClick={handleSignUp}> Sign Up!</a>
                     </p>
                 </div>
             </form>

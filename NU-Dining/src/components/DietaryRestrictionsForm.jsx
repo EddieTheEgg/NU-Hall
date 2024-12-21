@@ -1,67 +1,52 @@
 import React, { useState } from "react";
+import { useSignup } from '../context/SignupContext.jsx'; // Assuming you have a context for managing signup data
+import { useNavigate } from 'react-router-dom';
 
-const DietaryRestrictionsForm = ({ onSubmit }) => {
-    // State for the different dietary restrictions categories
+const DietaryRestrictionsForm = () => {
+    const { setSignupData } = useSignup();
     const [allergies, setAllergies] = useState([]);
     const [proteinPreferences, setProteinPreferences] = useState([]);
     const [lifestylePreferences, setLifestylePreferences] = useState([]);
     const [restrictedIngredients, setRestrictedIngredients] = useState("");
+    const navigate = useNavigate();
 
-    // Handle checkbox changes for each dietary restriction category
     const handleCheckboxChange = (setState, value) => (e) => {
         setState((prev) =>
             e.target.checked
-                ? [...prev, value] // Add to array if checked
-                : prev.filter((item) => item !== value) // Remove from array if unchecked
+                ? [...prev, value]
+                : prev.filter((item) => item !== value)
         );
     };
 
-    // Convert "otherPreferences" into a list format
     const parseOtherPreferences = (input) => {
         return input
-            .split(",") // Split input by commas
-            .map((item) => item.trim()) // Trim spaces around each item
-            .filter((item) => item); // Remove empty strings
+            .split(",")
+            .map((item) => item.trim())
+            .filter((item) => item);
     };
 
-    // Prepare the data to be submitted
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // Structure the data into categories
         const dietaryRestrictions = {
-            allergies: allergies,
-            proteinPreferences: proteinPreferences,
-            lifestylePreferences: lifestylePreferences,
-            restrictedIngredients: parseOtherPreferences(restrictedIngredients), // Convert to list
+            allergies,
+            proteinPreferences,
+            lifestylePreferences,
+            restrictedIngredients: parseOtherPreferences(restrictedIngredients),
         };
-
-        // Call the onSubmit function passed as a prop with the structured dietary restrictions
-        onSubmit(dietaryRestrictions);
+        setSignupData((prevData) => ({
+            ...prevData,
+            dietaryRestrictions,
+        }));
+        navigate('/nutritional-goals'); // Navigate to nutritional preferences page
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Dietary Restrictions</h2>
-            <p>(You can always edit this later in your profile)</p>
+            <h2>Well hi, I’m excited to be your personal food assistant!</h2>
+            <p>Do you have any dietary restrictions listed below? (You can always edit this later in your profile)</p>
 
             <h3>1. Allergies (Check all that apply):</h3>
-            {[
-                "Gluten",
-                "Soy",
-                "Dairy",
-                "Egg",
-                "Peanuts",
-                "Tree Nuts",
-                "Sesame",
-                "Mustard",
-                "Celery",
-                "Sulphites",
-                "MSG",
-                "Onion",
-                "Garlic",
-                "Seafood/Fish",
-            ].map((item) => (
+            {["Gluten", "Soy", "Dairy", "Egg", "Peanuts", "Tree Nuts", "Sesame", "Mustard", "Celery", "Sulphites", "MSG", "Onion", "Garlic", "Seafood/Fish"].map((item) => (
                 <label key={item}>
                     <input
                         type="checkbox"
@@ -72,12 +57,7 @@ const DietaryRestrictionsForm = ({ onSubmit }) => {
             ))}
 
             <h3>2. Protein or Food Source Preferences:</h3>
-            {[
-                "Avoid Beef",
-                "Avoid Pork",
-                "Avoid Poultry",
-                "Avoid Alcohol",
-            ].map((item) => (
+            {["Avoid Beef", "Avoid Pork", "Avoid Poultry", "Avoid Alcohol"].map((item) => (
                 <label key={item}>
                     <input
                         type="checkbox"
@@ -98,14 +78,13 @@ const DietaryRestrictionsForm = ({ onSubmit }) => {
                 </label>
             ))}
 
-            <h3>4. Any Other Restrictions (Ingredients)?</h3>
+            <h3>4. Any Other Restrictions or Preferences?</h3>
             <textarea
                 value={restrictedIngredients}
                 onChange={(e) => setRestrictedIngredients(e.target.value)}
                 placeholder="Enter ingredients separated by commas, e.g., Mushroom, Pineapple"
             />
 
-            <br />
             <button type="submit">Next</button>
         </form>
     );
