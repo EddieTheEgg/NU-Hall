@@ -5,16 +5,23 @@ import "../styles/dietaryform.css";
 import { IoCheckmarkCircle, IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { LuCirclePlus } from "react-icons/lu";
 import { MdNoFood } from "react-icons/md";
-import { TiDeleteOutline } from "react-icons/ti";
 
 const DietaryRestrictionsForm = () => {
     const { setSignupData, signupData } = useSignup();
     const [allergies, setAllergies] = useState([]);
     const [proteinPreferences, setProteinPreferences] = useState([]);
-    const [lifestylePreferences, setLifestylePreferences] = useState([]);    
+    const [lifestylePreferences, setLifestylePreferences] = useState([]);
     const [restrictedIngredients, setRestrictedIngredients] = useState([]);
     const [newIngredient, setNewIngredient] = useState("");
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        setAllergies(signupData.dietaryRestrictions?.allergies || []);
+        setProteinPreferences(signupData.dietaryRestrictions?.proteinPreferences || []);
+        setLifestylePreferences(signupData.dietaryRestrictions?.lifestylePreferences || []);
+        setRestrictedIngredients(signupData.dietaryRestrictions?.restrictedIngredients || []);
+    }, [signupData]);
 
 
     const handleCheckboxChange = (setState, value) => () => {
@@ -34,9 +41,9 @@ const DietaryRestrictionsForm = () => {
             lifestylePreferences,
             restrictedIngredients,
         };
-        
+
         console.log("Submitting dietary restrictions:", dietaryRestrictions);
-        
+
         setSignupData((prevData) => ({
             ...prevData,
             dietaryRestrictions,
@@ -45,7 +52,7 @@ const DietaryRestrictionsForm = () => {
         navigate('/nutritional-goals');
     };
 
-    const isSelected = (item, selectedItems) => selectedItems.includes(item); 
+    const isSelected = (item, selectedItems) => selectedItems.includes(item);
 
     const addIngredient = () => {
         if (newIngredient.trim() !== "") {
@@ -140,7 +147,7 @@ const DietaryRestrictionsForm = () => {
               
             </div>      
 
-            <button type="submit" className = "next-button-part2">Next</button>
+            <button type="submit" className = "next-button-part2">Save and continue!</button>
         </form>
     );
 };
