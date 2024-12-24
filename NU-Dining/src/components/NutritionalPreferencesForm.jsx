@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { useSignup } from '../context/SignupContext.jsx'; // Assuming you have a context for managing signup data
+import { useSignup } from '../context/SignupContext.jsx'; 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import "../styles/nutritionalform.css"; 
 
 const NutritionalPreferencesForm = () => {
     const { signupData, setSignupData } = useSignup();
     const [nutrition, setNutrition] = useState({});
+    const [selectedNutrients, setSelectedNutrients] = useState({}); 
     const navigate = useNavigate();
 
     const nutrients = [
@@ -29,14 +31,19 @@ const NutritionalPreferencesForm = () => {
         "Saturated Fat + Trans Fat (g)",
     ];
 
-    const handleCheckboxChange = (nutrient) => {
+    const handleButtonClick = (nutrient) => {
         setNutrition((prev) => ({
             ...prev,
             [nutrient]: prev[nutrient] ? undefined : { min: "", max: "" },
         }));
+        setSelectedNutrients((prev) => ({
+            ...prev,
+            [nutrient]: !prev[nutrient], 
+        }));
     };
 
     const handleRangeChange = (nutrient, key, value) => {
+        console.log(`Changing ${key} for ${nutrient} to ${value}`);
         setNutrition((prev) => ({
             ...prev,
             [nutrient]: { ...prev[nutrient], [key]: value },
@@ -55,49 +62,72 @@ const NutritionalPreferencesForm = () => {
                 {}
             );
 
-        // Combine all data and send to backend
+       
         const finalData = {
             ...signupData,
-            nutritionalPreferences: formattedNutrition,
+            nutritionalFocus: formattedNutrition,
         };
 
         try {
-            await axios.post("http://localhost:8080/api/users/signup", finalData);
+            await axios.post("http://localhost:8080/api/users/addUser", finalData);
             navigate('/home'); // Navigate to home page after successful signup
         } catch (error) {
             console.error("Signup error:", error);
-            // Handle error (e.g., show a message)
+           
         }
+        console.log("Nutrition data:", nutrition);
     };
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <h2>Alrighty! Let’s move on to your nutritional preferences.</h2>
-            <p>Choose the nutritional information that applies to you, and provide a numerical value (min input and max input) is considered your daily goal for them!</p>
+    
 
+    return (
+        <form onSubmit={handleSubmit} className="nutritionalPref-form">
+            <h2>Thanks! We're almost done, now we need to set up your goals!</h2>
+            <p>Choose the relevant nutritional goals below that apply to you!</p>
+            <p>Then provide the numerical range (min ~ max) that reprsents your daily goal for that nutrient!</p>
+            <hr />
             {nutrients.map((nutrient) => (
-                <div key={nutrient}>
-                    <label>
-                        {nutrient}:
-                        <input
-                            type="number"
-                            placeholder="Min"
-                            value={nutrition[nutrient]?.min || ""}
-                            onChange={(e) => handleRangeChange(nutrient, "min", e.target.value)}
-                        />
-                        <input
-                            type="number"
-                            placeholder="Max"
-                            value={nutrition[nutrient]?.max || ""}
-                            onChange={(e) => handleRangeChange(nutrient, "max", e.target.value)}
-                        />
-                    </label>
+                <div key={nutrient} className="nutrient-type">
+                    <button
+                        type="button"
+                        className={`nutrient-button ${selectedNutrients[nutrient] ? 'active' : 'non-active'}`} // Add active class if selected
+                        onClick={() => handleButtonClick(nutrient)}
+                    >
+                        {nutrient}
+                    </button>
+                    <div className={`range-inputs ${selectedNutrients[nutrient] ? 'visible' : ''}`}>
+                        {selectedNutrients[nutrient] && ( 
+                            <>
+                            <div className="arrow">▶</div>
+                            <section className="input-section-range">
+                                <label>Min:</label>
+                                <input
+                                    type="number"
+                                    placeholder="0"
+                                    value={nutrition[nutrient]?.min || ""}
+                                    onChange={(e) => handleRangeChange(nutrient, "min", e.target.value)}
+                                    required
+                                />
+                            </section>
+                            <section className= "input-section-range">
+                                <label>Max: </label>
+                                <input
+                                    type="number"
+                                    placeholder="0"
+                                    value={nutrition[nutrient]?.max || ""}
+                                    onChange={(e) => handleRangeChange(nutrient, "max", e.target.value)}
+                                />
+                            </section>
+                            </>
+                        )}
+                    </div>
                 </div>
             ))}
 
-            <button type="submit">Submit</button>
+            <button type="submit" className="submit-signupButton">Submit</button>
         </form>
     );
 };
 
 export default NutritionalPreferencesForm;
+
