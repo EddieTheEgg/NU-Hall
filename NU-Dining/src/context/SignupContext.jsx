@@ -10,7 +10,7 @@ export const SignupProvider = ({ children }) => {
         email: '',
         password: '',
         dietaryRestrictions: {},
-        nutritionalPreferences: {},
+        nutritionalFocus: {},
     });
 
     return (
