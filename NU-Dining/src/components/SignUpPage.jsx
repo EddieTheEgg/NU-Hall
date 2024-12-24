@@ -37,7 +37,7 @@ const SignUpPage = () => {
     return (
         <div className="signup-container">
             <form onSubmit={handleSubmit} className="signup-form">
-                <h2>Welcome! Start creating your account below!</h2>
+                <h2>Welcome! Your sign up journey begins here: </h2>
                 <div className="input-box-signup">
                     <input
                         type="text"
@@ -68,7 +68,7 @@ const SignUpPage = () => {
                     />
                     <FaLock className="icon"/>
                 </div>
-                <button type="submit" className="next-button">Next</button>
+                <button type="submit" className="next-button">Save and continue!</button>
                 <div className="return-to-login">
                     <p>Have an account? 
                         <a onClick={handleReturnLogin}> Log in!</a>
