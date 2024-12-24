@@ -1,0 +1,155 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url("../assets/background.jpg") no-repeat;
+    background-size: cover;
+    background-position: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.nutritionalPref-form {
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+    border: 0.5px solid #ffffff; 
+    border-radius: 15px;
+    backdrop-filter: blur(40px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 1rem;
+}
+
+.nutritionalPref-form p{
+    margin-bottom: -0.7rem;
+}
+
+@media (max-width: 600px) {
+    .nutritionalPref-form {
+        padding: 10px;
+    }
+}
+
+.non-active{
+    background-color: white; 
+    color: black;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px; 
+}
+
+.active{
+    background: white;
+    color: black;
+    box-shadow: 0 0 10px rgba(255, 255, 255);
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px; 
+}
+
+.active:hover, .non-active:hover{
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+}
+
+.nutrient-type{
+    display:flex;
+}
+
+.range-inputs {
+    display: flex;
+    transform: translateX(-100%); /* Start off-screen to the left */
+    opacity: 0; /* Hidden initially */
+    transition: opacity 1s ease, transform 0.3s ease; /* Smooth transition for both */
+    border-radius: 5px;
+}
+
+.range-inputs.visible {
+    transform: translateX(5px); /* Move into view */
+    opacity: 1; /* Fully visible */
+    gap: 15px;
+    transition: opacity 0.5s ease, transform 0.3s ease; 
+}
+
+.range-inputs:not(.visible) {
+    opacity: 0; /* Hidden */
+    transform: translateX(-20px); /* Move out to the left */
+    transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+
+
+.input-section-range{
+    display:flex;
+    align-items: center;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.input-section-range label{
+    color: black;
+    font-size: 1rem;
+}
+
+.input-section-range input{
+    border: none;
+    border-bottom: 1px solid #000000;
+    background: transparent;
+    color: black;
+    font-size: 1rem;
+    padding: 0.2rem;
+}
+
+.input-section-range input::placeholder{
+    color: rgb(102, 102, 102);
+}
+
+.min-section div, .max-section div{
+    color: black;
+}
+
+.arrow{
+    background: transparent;
+    margin-top: 0.7rem;
+    margin-left: 0.2rem;
+    margin-right: -0.5rem;
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none; /* Disable default appearance */
+    appearance: none; /* For modern browsers */
+}
+
+.submit-signupButton{
+    width:100%;
+    height: 100%;
+    background: white;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 1rem;
+    color: black;
+    transition: box-shadow 0.3s ease;
+}
+
+.submit-signupButton:hover{
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 
+                0 0 10px rgba(255, 255, 255, 0.6), 
+                0 0 15px rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
