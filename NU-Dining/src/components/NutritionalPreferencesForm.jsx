@@ -73,8 +73,8 @@ const NutritionalPreferencesForm = () => {
 
         try {
             await axios.post("http://localhost:8080/api/users/addUser", finalData);
-            setSignupData(finalData); // Save nutritional preferences to signupData
-            navigate('/home'); // Navigate to home page after successful signup
+            setSignupData(finalData); 
+            navigate('/home'); 
         } catch (error) {
             console.error("Signup error:", error);
         }
