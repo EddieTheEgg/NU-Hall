@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSignup } from '../context/SignupContext.jsx'; 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -31,6 +31,11 @@ const NutritionalPreferencesForm = () => {
         "Saturated Fat + Trans Fat (g)",
     ];
 
+    useEffect(() => {
+        // Load saved nutritional preferences into the state
+        setNutrition(signupData.nutritionalFocus || {});
+    }, [signupData]);
+
     const handleButtonClick = (nutrient) => {
         setNutrition((prev) => ({
             ...prev,
@@ -43,7 +48,6 @@ const NutritionalPreferencesForm = () => {
     };
 
     const handleRangeChange = (nutrient, key, value) => {
-        console.log(`Changing ${key} for ${nutrient} to ${value}`);
         setNutrition((prev) => ({
             ...prev,
             [nutrient]: { ...prev[nutrient], [key]: value },
@@ -62,7 +66,6 @@ const NutritionalPreferencesForm = () => {
                 {}
             );
 
-       
         const finalData = {
             ...signupData,
             nutritionalFocus: formattedNutrition,
@@ -70,27 +73,24 @@ const NutritionalPreferencesForm = () => {
 
         try {
             await axios.post("http://localhost:8080/api/users/addUser", finalData);
+            setSignupData(finalData); // Save nutritional preferences to signupData
             navigate('/home'); // Navigate to home page after successful signup
         } catch (error) {
             console.error("Signup error:", error);
-           
         }
-        console.log("Nutrition data:", nutrition);
     };
-
-    
 
     return (
         <form onSubmit={handleSubmit} className="nutritionalPref-form">
             <h2>Thanks! We're almost done, now we need to set up your goals!</h2>
             <p>Choose the relevant nutritional goals below that apply to you!</p>
-            <p>Then provide the numerical range (min ~ max) that reprsents your daily goal for that nutrient!</p>
+            <p>Then provide the numerical range (min ~ max) that represents your daily goal for that nutrient!</p>
             <hr />
             {nutrients.map((nutrient) => (
                 <div key={nutrient} className="nutrient-type">
                     <button
                         type="button"
-                        className={`nutrient-button ${selectedNutrients[nutrient] ? 'active' : 'non-active'}`} // Add active class if selected
+                        className={`nutrient-button ${selectedNutrients[nutrient] ? 'active' : 'non-active'}`}
                         onClick={() => handleButtonClick(nutrient)}
                     >
                         {nutrient}
@@ -109,7 +109,7 @@ const NutritionalPreferencesForm = () => {
                                     required
                                 />
                             </section>
-                            <section className= "input-section-range">
+                            <section className="input-section-range">
                                 <label>Max: </label>
                                 <input
                                     type="number"
@@ -124,7 +124,8 @@ const NutritionalPreferencesForm = () => {
                 </div>
             ))}
 
-            <button type="submit" className="submit-signupButton">Submit</button>
+            <p>*Note: You can always edit your information in settings!</p>
+            <button type="submit" className="submit-signupButton">Save and submit!</button>
         </form>
     );
 };
