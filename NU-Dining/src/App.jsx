@@ -6,6 +6,7 @@ import DietaryRestrictions from './components/DietaryRestrictionsForm.jsx';
 import NutritionalGoals from './components/NutritionalPreferencesForm.jsx';
 import HomePage from './components/HomePage.jsx';
 import { SignupProvider } from './context/SignupContext';
+import MealPreferencesForm from './components/MealPreferencesForm.jsx';
 
 const App = () => {
     return (
@@ -17,6 +18,7 @@ const App = () => {
                     <Route path="/dietary-restrictions" element={<DietaryRestrictions />} />
                     <Route path="/nutritional-goals" element={<NutritionalGoals />} />
                     <Route path="/home" element={<HomePage />} />
+                    <Route path="/meal-preferences" element={<MealPreferencesForm />} />
                 </Routes>
             </Router>
         </SignupProvider>
