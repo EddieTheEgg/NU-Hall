@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
 import "../styles/loginform.css"; 
+import { useSignup } from "../context/SignupContext";
 
 const UserLoginForm = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState(""); 
+    const { setSignupData } = useSignup();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -18,9 +20,12 @@ const UserLoginForm = () => {
                 password
             });
 
-            if (response.data === "Login successful") {
-                setErrorMessage(""); // Clear any previous error message
-                navigate('/home'); // Navigate to the home page
+            if (response.data) {
+                setSignupData((prevData) => ({
+                    ...prevData,
+                    ...response.data,
+                }));
+                navigate('/home');
             } else {
                 setErrorMessage("Email or password mismatch."); 
             }
