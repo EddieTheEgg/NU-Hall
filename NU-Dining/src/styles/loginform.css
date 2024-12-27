@@ -8,10 +8,10 @@
 }
 
 body{
-    background: url("../assets/background.jpg") no-repeat;
+    background: url("../assets/background.jpg") center center fixed;
     background-size: cover;
-    background-position: center;
     font-family: 'Poppins', sans-serif;
+    margin: 0;
 }
 
 .login-container {
