@@ -1,28 +1,32 @@
-import React from 'react';
-import { useSignup } from '../context/SignupContext.jsx';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
-    const { signupData } = useSignup();
+    const [userProfile, setUserProfile] = useState(null);
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        const storedData = localStorage.getItem('userProfile');
+        if (storedData) {
+            setUserProfile(JSON.parse(storedData)); 
+        }
+    }, []);
 
     const handleMakeMealClick = () => {
         navigate('/meal-preferences');
     };
 
     return (
-        <>
+        <>  
+            <div>
+                {userProfile && userProfile.name && <h1>Hello, {userProfile.name}!</h1>}
+            </div>
             <section>
-                <h1>Create a meal plan:</h1>
+                <h2>Create a meal plan:</h2>
                 <button type="button" onClick={handleMakeMealClick}>Make a meal!</button>
             </section>
-            <div>
-                {signupData.name && <p>Hello, {signupData.name}!</p>}
-                {/* Add more user-specific content here */}
-            </div>
-        
         </>
-        
     );
 };
 
