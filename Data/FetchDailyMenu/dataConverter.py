@@ -22,11 +22,15 @@ for location in locations:
 
                 for kitchen in categories:
                     kitchen_name = kitchen["name"]
+                
+                    if location == "IV" and kitchen_name == "SOUP":
+                        kitchen_name = "SOUP (IV)"  # Rename SOUP to SOUP (IV) to not conflict with Steast SOUP kitchen as well
+
                     for item in kitchen["items"]:
                         item_data = {
                             "Location": location,
                             "Period": period,   
-                            "Kitchen": kitchen_name,
+                            "Kitchen": kitchen_name, #The new name is placed here depending whether the kitchen was oreiginally a SOUP or not
                             "Dish_Name": item["name"],
                             "Description": item["desc"],
                             "Portion_Size": item["portion"],
@@ -54,8 +58,7 @@ for location in locations:
                         all_menu_items.append(item_data)
 
         except Exception as e:
-            print(f"Error fetching data for Location: {location}, Period: {period}. Error: {e}")
-            continue  # Skip to the next iteration
+            print(f"Error fetching data for {location} during {period}: {e}")
 
 df = pd.DataFrame(all_menu_items)
 
