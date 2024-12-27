@@ -47,25 +47,16 @@ public class UserController {
     //Validate user attempt with login
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:5173")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequest loginRequest) {
+    public ResponseEntity<User> login(@RequestBody UserLoginRequest loginRequest) {
         String email = loginRequest.getEmail().trim();
         String password = loginRequest.getPassword().trim();
         
         Optional<User> user = userService.findUserByEmail(email);
         
-        if (user.isPresent()) {
-            System.out.println("User found: " + user.get().getEmail());
-            System.out.println("Input password: " + password);
-            System.out.println("Stored password: " + user.get().getPassword());
-            System.out.println(user.get().getPassword().equals(password));
-
-            if (user.get().getPassword().equals(password)) {
-                // Return success response
-                return ResponseEntity.ok("Login successful");
-            }
+        if (user.isPresent() && user.get().getPassword().equals(password)) {
+            return ResponseEntity.ok(user.get()); // Return the user object
         }
-        // Return failure response
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password mismatch");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
 } 
