@@ -7,6 +7,7 @@ import NutritionalGoals from './components/NutritionalPreferencesForm.jsx';
 import HomePage from './components/HomePage.jsx';
 import { SignupProvider } from './context/SignupContext';
 import MealPreferencesForm from './components/MealPreferencesForm.jsx';
+import EditMeals from './components/EditMeals.jsx';
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                     <Route path="/nutritional-goals" element={<NutritionalGoals />} />
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/meal-preferences" element={<MealPreferencesForm />} />
+                    <Route path="/edit-meals" element={<EditMeals />} />
                 </Routes>
             </Router>
         </SignupProvider>
