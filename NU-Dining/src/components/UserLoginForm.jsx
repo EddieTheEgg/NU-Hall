@@ -4,13 +4,15 @@ import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
 import "../styles/loginform.css"; 
 import { useSignup } from "../context/SignupContext";
+import { saveToLocalStorage } from "../utils/localStorageUtils"; // Import the utility
+
 
 const UserLoginForm = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState(""); 
-    const { setSignupData } = useSignup();
+    const {signupData, setSignupData } = useSignup();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -21,10 +23,23 @@ const UserLoginForm = () => {
             });
 
             if (response.data) {
+                console.log('Login Response Data:', response.data); 
+
+                // Extract necessary fields from the response
+                const { name, email, dietaryRestrictions, nutritionalFocus } = response.data;
+                saveToLocalStorage("userProfile", { name, email, dietaryRestrictions, nutritionalFocus });
+                
+
+                // Save to SignupContext (Might delete since not needed for logging in?)
                 setSignupData((prevData) => ({
                     ...prevData,
-                    ...response.data,
-                }));
+                    name,
+                    password,
+                    email,
+                    dietaryRestrictions,
+                    nutritionalFocus,
+                })); 
+
                 navigate('/home');
             } else {
                 setErrorMessage("Email or password mismatch."); 
