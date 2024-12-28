@@ -29,6 +29,7 @@ public class MealService {
         System.out.println("Potential valid meals: " + potentialValidMeals.size());
         for (Meal meal : potentialValidMeals) {
             System.out.println("Meal Name: " + meal.getPeriod() + " " + meal.getDishName()); // Assuming Meal has a getName() method
+            System.out.println("Allergens: " + meal.getAllergens());
         }
 
         // Apply dietary restrictions if available
@@ -75,6 +76,12 @@ public class MealService {
             return false; 
         }
 
+        //Precondition check so we don't iterate through null
+        String allergensforAMeal = meal.getAllergens();
+        if (allergensforAMeal == null) {
+            return false; 
+        }
+
         for (String userLifestylePreference : userLifestylePreferences) {
             if (meal.getAllergens().contains(userLifestylePreference)) {
                 return false; // Keep the meal if it matches the user's preference (Vegan, Vegetarian)
@@ -88,6 +95,13 @@ public class MealService {
         if (userAllergens.isEmpty()) {
             return false;
         }
+
+        //Precondition check so we don't iterate through null
+        String allergensforAMeal = meal.getAllergens();
+        if (allergensforAMeal == null) {
+            return false; 
+        }
+
 
         // Convert a meal's allergy (String type -> List) for gluten handling
         List<String> mealAllergens = Arrays.asList(meal.getAllergens().split(","));
@@ -117,6 +131,11 @@ public class MealService {
         if (userUnwantedProteins.isEmpty()) {
             return false;
         }
+        //Precondition check so we don't iterate through null
+        String allergensforAMeal = meal.getAllergens();
+        if (allergensforAMeal == null) {
+            return false; 
+        }
     
         List<String> mealIngredients = Arrays.asList(meal.getIngredients().split(","));
     
@@ -131,6 +150,11 @@ public class MealService {
     private boolean containsUnwantedIngredients(Meal meal, List<String> userUnwantedIngredients) {
         if (userUnwantedIngredients.isEmpty()) {
             return false;
+        }
+        //Precondition check so we don't iterate through null
+        String allergensforAMeal = meal.getAllergens();
+        if (allergensforAMeal == null) {
+            return false; 
         }
     
         List<String> mealIngredients = Arrays.asList(meal.getIngredients().split(","));
