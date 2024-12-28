@@ -120,5 +120,23 @@
     cursor: pointer;
 }
 
+.location-openingInfo{
+    padding: 20px;
+    border-radius: 10px; 
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    margin-bottom: 1rem;
+    background: white;
+    color: black;
+    font-size: clamp(0.8rem, 1vw, 1.2rem);
+}
+
+.location-message{
+    margin-top: 0.2rem;
+}
+
+.operation-hours-title{
+    font-size: 1.5vw;
+}
 
 
