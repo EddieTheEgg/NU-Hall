@@ -8,19 +8,88 @@ const MealPreferencesForm = ({ onSubmit }) => {
     const [locations, setLocations] = useState([]);
     const [kitchens, setKitchens] = useState([]);
     const [currentDateTime, setCurrentDateTime] = useState("");
+    const [locationHours, setLocationHours] = useState([]);
     const navigate = useNavigate();
 
 
     useEffect(() => {
         const updateDateTime = () => {
             const now = new Date();
-            setCurrentDateTime(now.toLocaleString()); 
+            setCurrentDateTime(now.toLocaleString().split(",")); 
+            
         };
         updateDateTime(); 
         const intervalId = setInterval(updateDateTime, 1000); 
-
         return () => clearInterval(intervalId); 
     }, []);
+
+    //Fetch API time from NUDining
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const todayDate = new Date().toISOString().split("T")[0]; // Format date to YYYY-MM-DD via split 'T' of toISOString()
+                const apiUrl = `https://api.dineoncampus.com/v1/locations/weekly_schedule?site_id=5751fd2b90975b60e048929a&date=${todayDate}`;
+                
+                const response = await fetch(apiUrl); //wait for url to load before doing stuff with data (purpose of await and async)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json(); 
+                
+                const desiredLocations = [
+                    "The Eatery at Stetson East",
+                    "Social House at Stetson West",
+                    "United Table at International Village"
+                ];
+
+                const formatTime = (hour, minutes) => {
+                    let suffix = hour >= 12 ? 'pm' : 'am';
+                    let formattedHour = hour % 12; 
+                    formattedHour = formattedHour ? formattedHour : 12; // JS, if 0, then return 12 for midnight
+                    let formattedMinutes = minutes < 10 ? `0${minutes}` : minutes; // Pad single-digit minutes so 09 instead of just 9 for 7:09
+                    return `${formattedHour}:${formattedMinutes}${suffix}`;
+                };
+
+                const locationsWithTodayHours = result.the_locations.filter(location => 
+                    desiredLocations.includes(location.name) //filter the locations to just the three desired locations first
+                ).map(location => {
+                    const today = location.week.find(day => day.date === todayDate); //for each location, find the relevant date only
+                    
+                    // Format the operating hours for each location
+                    const formattedHours = today.hours.map(hour => {
+                        const startTime = formatTime(hour.start_hour, hour.start_minutes);
+                        const endTime = formatTime(hour.end_hour, hour.end_minutes);
+                        return `${startTime} - ${endTime}`;
+                    })
+                    
+                    //then for that relevant date, return the location and today's details.
+                    if (today) { 
+                        return {
+                            locationName: location.name,
+                            status: today.status,
+                            hours: formattedHours,
+                            hasSpecialHours: today.has_special_hours,
+                            closed: today.closed,
+                            message: location.status.message,
+                        };
+                    } else {
+                        return null;
+                    }
+                }).filter(location => location !== null); //To remove location if the data is malformed for it (safety backup)
+                
+                console.log(locationsWithTodayHours);
+                setLocationHours(locationsWithTodayHours);
+            } catch (error) {
+                console.error("Error fetching locations:", error);
+            }
+        };
+        fetchLocations();
+
+        const intervalId = setInterval(fetchLocations, 60000); // Fetch every 60 seconds
+
+        return () => clearInterval(intervalId); 
+    }, []); 
+
 
     // Mapping of locations to kitchens and their availability
     const locationToKitchens = {
@@ -110,8 +179,19 @@ const MealPreferencesForm = ({ onSubmit }) => {
     return (
         <form onSubmit={handleSubmit} className="mealPref-form">
             <section className="operation-hours">
-                <h2>Today's Hours of Operation</h2>
-                <p>Current Date and Time: {currentDateTime}</p>
+                <h2 className="operation-hours-title">Today's Hours of Operation</h2>
+                <p><strong>Today's Date:</strong> {currentDateTime[0]}</p>
+                <p><strong>Current Time:</strong> {currentDateTime[1]}</p>
+                <section className="display-locationHours">
+                    {locationHours.map((location) => (
+                        <section className="location-openingInfo">
+                         <h3>{location.locationName}</h3>
+                         <div><strong>Operating Hours:</strong> {location.hours} </div>
+                         <div className="location-message">{(location.status === "open") ? "Open currently!" : location.message}</div>
+                        </section>
+                    ))}
+                </section>
+               
             </section>
             <section className="user-mealPref">
                 <section className="periods-and-locations">
