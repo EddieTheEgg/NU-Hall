@@ -34,7 +34,13 @@ const EditMeals = () => {
               setMeals(response.data); 
 
               const periodsFromMeals = response.data.map((meal) => meal.period);
-              setPeriods([...new Set(periodsFromMeals)]); 
+              
+              const customOrder = ["Breakfast", "Lunch", "Dinner"];
+              const sortedPeriods = [...new Set(periodsFromMeals)].sort((a, b) => {
+                  return customOrder.indexOf(a) - customOrder.indexOf(b); //if negative, a comes before b, positive, b comes before a
+              });
+
+              setPeriods(sortedPeriods);
 
               const periodLocationDict = response.data.reduce((acc, meal) => {
                 const { period, location } = meal;
@@ -131,7 +137,7 @@ const EditMeals = () => {
                             )
                             .map((meal) => (
                               <div key={meal.id} className = "meal-added">
-                                    <div className="select-mealDisplay">{meal.kitchen} - {meal.dishName}</div>
+                                    <div className="select-mealDisplay"><strong>{meal.kitchen}</strong> - {meal.dishName}</div>
                                     <div className="specific-mealButtons">
                                       <IoIosInformationCircle className="information-button"/>
                                       <IoMdCloseCircle onClick={() => removeMeal(meal)} className="remove-specific-meal-button" />
@@ -172,7 +178,7 @@ const EditMeals = () => {
                                   currentSelection.location
                                 ).map((meal) => (
                                   <div key={meal.id} className = "potential-meal-add">
-                                    <div className="select-mealDisplay">{meal.kitchen} - {meal.dishName}</div>
+                                    <div className="select-mealDisplay"><strong>{meal.kitchen}</strong> - {meal.dishName}</div>
                                     <div className="specific-mealButtons">
                                       <IoIosInformationCircle className="information-button"/>
                                       <IoIosAddCircle onClick={() => addMeal(meal)} className="add-specific-meal-button" />
