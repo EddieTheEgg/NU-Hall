@@ -11,9 +11,32 @@ const EditMeals = () => {
   const [periods, setPeriods] = useState([]);
   const [locationPeriods, setLocationPeriods] = useState({});
   const [currentSelection, setCurrentSelection] = useState(null); // Track current period & location for meal selection
+  const [currentMealNutrient, setCurrentMealNutrient] = useState(null);
+  const [userNutritionalFocus, setUserNutritionalFocus] = useState([{display: "Calories", backend: "calories"}, {display: "Total Carbohydrates (g)", backend: "carbohydrates"}, {display: "Protein (g)", backend: "protein"}, {display: "Total Fat (g)" , backend: "fat"}]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const nutrientKeys = [
+    {"Calories": "calories"},
+    {"Protein (g)": "protein"},
+    {"Total Carbohydrates (g)": "carbohydrates"},
+    {"Sugar (g)": "sugar"},
+    {"Total Fat (g)": "fat"},
+    {"Saturated Fat (g)": "saturatedFat"},
+    {"Cholesterol (mg)": "cholesterol"},
+    {"Dietary Fiber (g)": "dietaryFiber"},
+    {"Sodium (mg)": "sodium"},
+    {"Potassium (mg)": "potassium"},
+    {"Calcium (mg)": "calcium"},
+    {"Iron (mg)": "iron"},
+    {"Trans Fat (g)": "transFat"},
+    {"Vitamin D (IU)": "vitaminD"},
+    {"Vitamin C (mg)": "vitaminC"},
+    {"Calories From Fat": "caloriesFromFat"},
+    {"Vitamin A (RE)": "vitaminA"},
+    {"Saturated Fat + Trans Fat (g)": "saturatedTransFat"},
+  ];
+  
   useEffect(() => {
     const handleMessage = async (event) => {
       if (event.origin === window.location.origin) {
@@ -22,6 +45,24 @@ const EditMeals = () => {
 
         if (requestData) {
           setLoading(true);
+
+          if (requestData.user.nutritionalFocus){
+            const userNutrientFocus = Object.entries(requestData.user.nutritionalFocus).map(([key, value]) => {
+              //key being frontend user display nutrient version
+              const matchedNutrient = nutrientKeys.find(nutrient => nutrient[key]);
+              console.log(Object.entries(matchedNutrient)[0][1]); //ex: [["protein(g) : protein "]]
+            
+              return {
+                display: key,  
+                backend: Object.entries(matchedNutrient)[0][1],  
+                range: value, 
+              };
+            });
+            console.log("User Nutrient Focus:", userNutrientFocus);
+            setUserNutritionalFocus(userNutrientFocus);
+          }
+     
+
           try {
             const response = await axios.post(
               "http://localhost:8080/api/meals/generatePotentialMeals",
@@ -105,7 +146,7 @@ const EditMeals = () => {
   const addMeal = (meal) => {
     setSelectedMeals((prev) => [...prev, meal]);
     setMeals((prev) => prev.filter((m) => m.id !== meal.id)); // Remove added meal from the available list
-     // setCurrentSelection(null); // Close the meal selection modal
+     // setCurrentSelection(null); // Close the meal selection modal, save for
   };
 
   // Handle removing a meal
@@ -113,6 +154,16 @@ const EditMeals = () => {
     setSelectedMeals((prev) => prev.filter((m) => m.id !== meal.id));
     setMeals((prev) => [...prev, meal]); // Add the removed meal back to the available list
   };
+
+  const displayMealNutrient = (meal) => {
+    if (currentMealNutrient && currentMealNutrient.dishName === meal.dishName) {
+      setCurrentMealNutrient(null);
+    } else {
+      setCurrentMealNutrient(meal);
+    }
+  };
+  
+  
 
   return (
     <>
@@ -137,22 +188,42 @@ const EditMeals = () => {
                             )
                             .map((meal) => (
                               <div key={meal.id} className = "meal-added">
-                                    <div className="select-mealDisplay"><strong>{meal.kitchen}</strong> - {meal.dishName}</div>
-                                    <div className="specific-mealButtons">
-                                      <IoIosInformationCircle className="information-button"/>
-                                      <IoMdCloseCircle onClick={() => removeMeal(meal)} className="remove-specific-meal-button" />
-                                    </div>  
-                              </div>
+                              <section className= "horizontal-mealBar">
+                                <div className="select-mealDisplay"><strong>{meal.kitchen}</strong> - {meal.dishName}</div>
+                                <div className="specific-mealButtons">
+                                  <IoIosInformationCircle className="information-button" onClick={() => displayMealNutrient(meal)}/>
+                                  <IoMdCloseCircle onClick={() => removeMeal(meal)} className="remove-specific-meal-button" />
+                                </div>
+                              </section>                                  
+                              {currentMealNutrient &&
+                               currentMealNutrient.dishName === meal.dishName &&(
+                                <section className="meal-nutrientInfo">                         
+                                    <p><strong>Ingredients:</strong> {currentMealNutrient.ingredients}</p>
+                                    {userNutritionalFocus.map(({ display, backend }) => {
+                                      return (
+                                        <p key={backend}>
+                                          <strong>{display}:</strong> {currentMealNutrient[backend] || 0}
+                                        </p>
+                                      );
+                                    })}
+                              </section>
+                              )}
+                            </div>
                             ))}
                         </section>
                         <button
                           type="button"
                           className="add-meal-button"
                           onClick={() => {
-                            if (currentSelection) {
-                              setCurrentSelection(null);
-                            } else {
+                            if (
+                              currentSelection &&
+                              (currentSelection.period !== period || currentSelection.location !== location)
+                            ) {
                               setCurrentSelection({ period, location });
+                            } else if (!currentSelection) {
+                              setCurrentSelection({ period, location });
+                            } else {
+                              setCurrentSelection(null);
                             }
                           }}
                         >
@@ -160,7 +231,6 @@ const EditMeals = () => {
                         </button>
                         </section>
 
-                      {/* Modal is conditionally rendered only for the selected period and location */}
                       {currentSelection &&
                         currentSelection.period === period &&
                         currentSelection.location === location && (
@@ -178,11 +248,26 @@ const EditMeals = () => {
                                   currentSelection.location
                                 ).map((meal) => (
                                   <div key={meal.id} className = "potential-meal-add">
-                                    <div className="select-mealDisplay"><strong>{meal.kitchen}</strong> - {meal.dishName}</div>
-                                    <div className="specific-mealButtons">
-                                      <IoIosInformationCircle className="information-button"/>
-                                      <IoIosAddCircle onClick={() => addMeal(meal)} className="add-specific-meal-button" />
-                                    </div>
+                                    <section className= "horizontal-mealBar">
+                                      <div className="select-mealDisplay"><strong>{meal.kitchen}</strong> - {meal.dishName}</div>
+                                      <div className="specific-mealButtons">
+                                        <IoIosInformationCircle className="information-button" onClick={() => displayMealNutrient(meal)}/>
+                                        <IoIosAddCircle onClick={() => addMeal(meal)} className="add-specific-meal-button" />
+                                      </div>
+                                    </section>                                  
+                                    {currentMealNutrient &&
+                                     currentMealNutrient.dishName === meal.dishName &&(
+                                      <section className="meal-nutrientInfo">                         
+                                          <p><strong>Ingredients:</strong> {currentMealNutrient.ingredients}</p>
+                                          {userNutritionalFocus.map(({ display, backend }) => {
+                                            return (
+                                              <p key={backend}>
+                                                <strong>{display}:</strong> {currentMealNutrient[backend] || 0}
+                                              </p>
+                                            );
+                                          })}
+                                    </section>
+                                    )}
                                   </div>
                                 ))}
                               </div>
