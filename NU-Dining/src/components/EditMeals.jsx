@@ -4,6 +4,7 @@ import "../styles/editMeals.css";
 import { IoIosAddCircle } from "react-icons/io";
 import { IoIosInformationCircle } from "react-icons/io";
 import { IoMdCloseCircle } from "react-icons/io";
+import { IoCheckmarkCircle, IoCheckmarkCircleOutline } from 'react-icons/io5';
 
 const EditMeals = () => {
   const [meals, setMeals] = useState([]);
@@ -13,6 +14,8 @@ const EditMeals = () => {
   const [currentSelection, setCurrentSelection] = useState(null); // Track current period & location for meal selection
   const [currentMealNutrient, setCurrentMealNutrient] = useState(null);
   const [userNutritionalFocus, setUserNutritionalFocus] = useState([{display: "Calories", backend: "calories"}, {display: "Total Carbohydrates (g)", backend: "carbohydrates"}, {display: "Protein (g)", backend: "protein"}, {display: "Total Fat (g)" , backend: "fat"}]);
+  const [selectedLocationPeriods, setSelectedLocationPeriods] = useState({});
+  const [nutrientSummary, setNutrientSummary] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -130,7 +133,7 @@ const EditMeals = () => {
   const getAvailableMeals = (period, location) => {
     return meals
       .filter((meal) => meal.period === period && meal.location === location)
-      .sort((a, b) => { //alphabetical sorting
+      .sort((a, b) => { 
         if (a.kitchen < b.kitchen) {
           return -1;
         }
@@ -145,14 +148,13 @@ const EditMeals = () => {
   // Adds a meal
   const addMeal = (meal) => {
     setSelectedMeals((prev) => [...prev, meal]);
-    setMeals((prev) => prev.filter((m) => m.id !== meal.id)); // Remove added meal from the available list
-     // setCurrentSelection(null); // Close the meal selection modal, save for
+    setMeals((prev) => prev.filter((m) => m.id !== meal.id)); 
   };
 
-  // Handle removing a meal
+  // Removes a meal
   const removeMeal = (meal) => {
     setSelectedMeals((prev) => prev.filter((m) => m.id !== meal.id));
-    setMeals((prev) => [...prev, meal]); // Add the removed meal back to the available list
+    setMeals((prev) => [...prev, meal]); 
   };
 
   const displayMealNutrient = (meal) => {
@@ -162,6 +164,76 @@ const EditMeals = () => {
       setCurrentMealNutrient(meal);
     }
   };
+
+  const mealSelectionExist = (period, location) => {
+    const existingLocations = selectedLocationPeriods[period] || [];
+    return (existingLocations.includes(location))
+  }
+  
+
+
+  const updateSelectedLocationPeriods = (period, location) => {
+    setSelectedLocationPeriods((prev) => {
+
+      //Necessary to keep the previous state of arrays in check:
+      const existingLocations = prev[period] || [];
+    
+      if (existingLocations.includes(location)) {
+        const updatedLocations = existingLocations.filter(loc => loc !== location);
+        const newState = {
+          ...prev, 
+          [period]: updatedLocations, 
+        };
+        
+        return newState;
+      } else {
+        const newState = {
+          ...prev, 
+          [period]: [...existingLocations, location], 
+        };
+        console.log('Updated State after addition:', newState);
+        
+        return newState;
+      }
+    });
+  };
+  
+  
+  
+
+  useEffect(() => {
+    const calculateTotalNutrients = () => {
+      const totalNutrients = userNutritionalFocus.reduce((totals, { backend }) => {
+        let total = 0;
+  
+        Object.entries(selectedLocationPeriods).forEach(([period, locations]) => {
+          
+          locations.forEach((location) => {
+            
+            const mealsForSelection = selectedMeals.filter(
+              (meal) => meal.period === period && meal.location === location
+            );
+  
+           
+            total += mealsForSelection.reduce(
+              (sum, meal) => sum + (meal[backend] || 0),
+              0
+            );
+          });
+        });
+  
+        totals[backend] = total; 
+        return totals;
+      }, {});
+  
+      return totalNutrients;
+    };
+  
+    const totalNutrients = calculateTotalNutrients();
+    setNutrientSummary(totalNutrients);
+  }, [selectedMeals, selectedLocationPeriods, userNutritionalFocus]);
+  
+  
   
   
 
@@ -176,8 +248,19 @@ const EditMeals = () => {
                 <h3>{period}:</h3>
                 <section className="locations-per-period">
                   {locationPeriods[period]?.map((location, locIndex) => (
-                    <div key={locIndex} className="create-meal-section">
-                      <h3>{location.replace("_", " ")}</h3>
+                    <div key={locIndex} className= {mealSelectionExist(period, location) ? "selected-create-meal-section" : "create-meal-section"}>
+                      <section className="create-meal-section-header">
+                        <h3>{location.replace("_", " ")}</h3>
+                        {mealSelectionExist(period, location) ?  
+                        <IoCheckmarkCircle
+                        className="complete-meal-button"
+                        onClick={() => updateSelectedLocationPeriods(period, location)}                         
+                        /> :  <IoCheckmarkCircleOutline
+                        className="complete-meal-button"
+                        onClick={() => updateSelectedLocationPeriods(period, location)}                         
+                        />}
+                      
+                      </section>
                       <section className="create-meal">
                         <section className="selectedMeals">
                           {selectedMeals
@@ -230,7 +313,7 @@ const EditMeals = () => {
                           +
                         </button>
                         </section>
-
+                      {/*Displays the avaliable meals for that specific period and location */}
                       {currentSelection &&
                         currentSelection.period === period &&
                         currentSelection.location === location && (
@@ -274,9 +357,25 @@ const EditMeals = () => {
                             </div>
                           </div>
                         )}
-                        <section className="periodLocation-nutrientInfo">
-                          <div>This is where each meal's total nutrient info will be shown</div>
-                        </section>
+
+                        {/*Displays the nutrient info for that specific period and location */}
+                       <section className="periodLocation-nutrientInfo">
+                          <h3>Total Nutrient:</h3>
+                          {userNutritionalFocus.map(({ display, backend }) => {
+                            const totalNutrient = selectedMeals
+                              .filter(
+                                (meal) =>
+                                  meal.period === period && meal.location === location
+                              )
+                              .reduce((total, meal) => total + (meal[backend] || 0), 0); 
+                              return (
+                              <p key={backend}>
+                                <strong>{display}:</strong> {totalNutrient}
+                              </p>
+                            );
+                          })}
+                       </section>
+
                     </div>
                   ))}
                 </section>
@@ -284,8 +383,31 @@ const EditMeals = () => {
             ))}
           </section>
           <section className="nutrientGoal-display">
-            Nutritional Goals will be displayed in this box.
+            <h3>Total Nutrient Summary:</h3>
+            {Object.entries(nutrientSummary).map(([key, value]) => (
+              <p key={key}>
+                <strong>{key}:</strong> {value}
+              </p>
+            ))}
           </section>
+          {/*Keep here for now, remove later this is for debugging purposes */}
+          <div className="finalized-locations">
+            <h4>Finalized Locations:</h4>
+            {Object.entries(selectedLocationPeriods).map(([period, locations]) => (
+              <div key={period}>
+                <h5>{period}</h5>
+                <ul>
+                  {locations.length > 0 ? (
+                    locations.map((location, index) => (
+                      <li key={index}>{location.replace("_", " ")}</li>
+                    ))
+                  ) : (
+                    <li>Unknown</li>
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
         </form>
       </section>
     </>
