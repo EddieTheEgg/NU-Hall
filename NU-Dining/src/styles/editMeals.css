@@ -51,6 +51,37 @@
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
+.selected-create-meal-section{
+    padding: 20px;
+    border: 2px solid #000000; 
+    border-radius: 10px; 
+    width: 100%;
+    background: white;
+    color: black;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.create-meal-section-header{
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.complete-meal-button{
+    margin-left: auto;
+    font-size: clamp(1.1vw, 1.2vw, 1.3vw);
+}
+
+.complete-meal-button:hover{
+    cursor: pointer;
+    background: transparent;
+    filter: drop-shadow(0 0 1px rgb(0, 0, 0));
+}
+
+
+
+
+
 .create-meal{
     background: white;
     border-radius: 15px;
@@ -142,7 +173,7 @@
 
 .select-mealDisplay{
     font-size: 1rem;
-    margin-left:
+    margin-left: 1rem;
 }
 
 .specific-mealButtons, .remove-specific-meal-button{
@@ -167,6 +198,18 @@
     max-height: 10rem;
     overflow: auto;
 }
+
+.periodLocation-nutrientInfo{
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+    margin-top: 1rem;
+    border-radius: 15px;
+    padding: 10px;
+    max-height: 7rem;
+    overflow: auto;
+}
+
+
 
 ::-webkit-scrollbar {
     width: 8px;
