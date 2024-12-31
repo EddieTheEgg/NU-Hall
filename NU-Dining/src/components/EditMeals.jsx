@@ -5,17 +5,24 @@ import { IoIosAddCircle } from "react-icons/io";
 import { IoIosInformationCircle } from "react-icons/io";
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoCheckmarkCircle, IoCheckmarkCircleOutline } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom'; 
 
 const EditMeals = () => {
+  const navigate = useNavigate();
   const [meals, setMeals] = useState([]);
   const [selectedMeals, setSelectedMeals] = useState([]);
   const [periods, setPeriods] = useState([]);
   const [locationPeriods, setLocationPeriods] = useState({});
-  const [currentSelection, setCurrentSelection] = useState(null); // Track current period & location for meal selection
+  const [currentSelection, setCurrentSelection] = useState(null); 
   const [currentMealNutrient, setCurrentMealNutrient] = useState(null);
-  const [userNutritionalFocus, setUserNutritionalFocus] = useState([{display: "Calories", backend: "calories"}, {display: "Total Carbohydrates (g)", backend: "carbohydrates"}, {display: "Protein (g)", backend: "protein"}, {display: "Total Fat (g)" , backend: "fat"}]);
+  const [userNutritionalFocus, setUserNutritionalFocus] = useState([
+    { display: "Calories", backend: "calories", range: {max: 0, min: 0}},
+     {display: "Total Carbohydrates (g)", backend: "carbohydrates", range: {max: 0, min: 0}}, 
+     {display: "Protein (g)", backend: "protein", range: {max: 0, min: 0}}, 
+     {display: "Total Fat (g)" , backend: "fat", range: {max: 0, min: 0}}]);
   const [selectedLocationPeriods, setSelectedLocationPeriods] = useState({});
   const [nutrientSummary, setNutrientSummary] = useState([]);
+  const [editableGoals, setEditableGoals] = useState(userNutritionalFocus);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -197,32 +204,50 @@ const EditMeals = () => {
       }
     });
   };
+
+  const handleGoalChange = (e, nutrient, rangeType) => {
+    const { value } = e.target;
+    
+    // Parse value to a number
+    const newValue = isNaN(value) ? "" : parseFloat(value);
+  
+    setUserNutritionalFocus((prevFocus) => {
+      return prevFocus.map((nutrientInfo) => {
+        if (nutrientInfo.backend === nutrient.backend) {
+          return {
+            ...nutrientInfo,
+            range: {
+              ...nutrientInfo.range,
+              [rangeType]: newValue, 
+            },
+          };
+        }
+        return nutrientInfo;
+      });
+    });
+  };
+  
   
   
   
 
   useEffect(() => {
     const calculateTotalNutrients = () => {
-      const totalNutrients = userNutritionalFocus.reduce((totals, { backend }) => {
+      const totalNutrients = userNutritionalFocus.reduce((totals, { backend, display }) => { 
         let total = 0;
   
         Object.entries(selectedLocationPeriods).forEach(([period, locations]) => {
-          
           locations.forEach((location) => {
-            
             const mealsForSelection = selectedMeals.filter(
-              (meal) => meal.period === period && meal.location === location
-            );
-  
-           
+              (meal) => meal.period === period && meal.location === location);
+
+              console.log('Meals for selection:', mealsForSelection); 
             total += mealsForSelection.reduce(
-              (sum, meal) => sum + (meal[backend] || 0),
-              0
-            );
+              (sum, meal) => sum + (meal[backend] || 0), 0);
           });
         });
   
-        totals[backend] = total; 
+        totals[display] = total; 
         return totals;
       }, {});
   
@@ -230,8 +255,10 @@ const EditMeals = () => {
     };
   
     const totalNutrients = calculateTotalNutrients();
+    console.log(totalNutrients); // Debugging
     setNutrientSummary(totalNutrients);
   }, [selectedMeals, selectedLocationPeriods, userNutritionalFocus]);
+  
   
   
   
@@ -359,55 +386,86 @@ const EditMeals = () => {
                         )}
 
                         {/*Displays the nutrient info for that specific period and location */}
-                       <section className="periodLocation-nutrientInfo">
-                          <h3>Total Nutrient:</h3>
-                          {userNutritionalFocus.map(({ display, backend }) => {
-                            const totalNutrient = selectedMeals
-                              .filter(
-                                (meal) =>
-                                  meal.period === period && meal.location === location
-                              )
-                              .reduce((total, meal) => total + (meal[backend] || 0), 0); 
-                              return (
-                              <p key={backend}>
-                                <strong>{display}:</strong> {totalNutrient}
-                              </p>
-                            );
-                          })}
-                       </section>
+                        <section className = "periodLocationNutrientInfo-container">
+                            <h3>Total Nutrient:</h3>
+                            <section className="periodLocation-nutrientInfo">
+                            {userNutritionalFocus.map(({ display, backend }) => {
+                              const totalNutrient = selectedMeals
+                                .filter(
+                                  (meal) =>
+                                    meal.period === period && meal.location === location
+                                )
+                                .reduce((total, meal) => total + (meal[backend] || 0), 0); 
+                                return (
+                                <p key={backend}>
+                                  <strong>{display}:</strong> {totalNutrient}                            
+                                </p>
+                                
+                              );
+                              
+                            })}
+                          </section>
+                        </section>
+                     
 
                     </div>
                   ))}
                 </section>
               </div>
             ))}
+            <h2>Nutrient Summary:</h2>
+             <section className="user-nutrientSummaries">
+              
+            <section className="nutrientGoal-display">
+              <h3>Nutrient Summary:</h3>
+              <p>Select the meal period and location that you want to be added to the total(s)!</p>
+              <section className="displayTotal-section">
+                {Object.entries(nutrientSummary).map(([key, value]) => (
+                  <p key={key}>
+                    <strong>{key}:</strong> {value}
+                  </p>                 
+                ))}
+              </section>
+             
+            </section>
+            <section className="userNutritional-Goals">
+              <h3>Nutrient Goals:</h3>
+              <p>These numbers are editable, but if you want to configure your saved nutritional goals, go to settings!</p>
+               <section className="displayGoalRange-section">
+                  {userNutritionalFocus.map((nutrientInfo) => {
+                    return (
+                      <div key={nutrientInfo.backend}>
+                        <strong>{nutrientInfo.display} Range: </strong>
+                        <input
+                          type="number"
+                          placeholder={nutrientInfo.range.min || "0"}
+                          value={nutrientInfo.range.min || ""}
+                          onChange={(e) => handleGoalChange(e, nutrientInfo, "min")}
+                          className="nutrientGoal-editInput"
+                        />
+                        {" - "}
+                        <input
+                          type="number"
+                          placeholder={nutrientInfo.range.max || "0"}
+                          value={nutrientInfo.range.max || ""}
+                          onChange={(e) => handleGoalChange(e, nutrientInfo, "max")}
+                          className="nutrientGoal-editInput"
+                        />
+                      </div>
+                    );
+                  })}
+                </section>             
+            </section> 
           </section>
-          <section className="nutrientGoal-display">
-            <h3>Total Nutrient Summary:</h3>
-            {Object.entries(nutrientSummary).map(([key, value]) => (
-              <p key={key}>
-                <strong>{key}:</strong> {value}
-              </p>
-            ))}
-          </section>
-          {/*Keep here for now, remove later this is for debugging purposes */}
-          <div className="finalized-locations">
-            <h4>Finalized Locations:</h4>
-            {Object.entries(selectedLocationPeriods).map(([period, locations]) => (
-              <div key={period}>
-                <h5>{period}</h5>
-                <ul>
-                  {locations.length > 0 ? (
-                    locations.map((location, index) => (
-                      <li key={index}>{location.replace("_", " ")}</li>
-                    ))
-                  ) : (
-                    <li>Unknown</li>
-                  )}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <section className="navigate-editMeals-buttons">
+            <button type="button" onClick={() => navigate("/meal-preferences")}>
+                Go back to Kitchen and Location Preferences
+              </button>
+              <button type="button" onClick={() => navigate("/home")}>
+                Return to Homepage
+            </button>
+          </section>       
+        </section> 
         </form>
       </section>
     </>
