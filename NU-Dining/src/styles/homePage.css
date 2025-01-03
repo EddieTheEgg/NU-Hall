@@ -1,0 +1,20 @@
+.homepage-container{
+    display: flex;
+    width: 98vw;
+    margin: 1rem;
+}
+
+.sidebar{
+    width: 20%;
+    height: 95vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(40px);
+    border-radius: 15px 0px 0px 15px;
+    padding: 20px;
+}
+
+.main-content{
+    background: blue;
+    padding: 20px;
+    width: 80%;
+}
