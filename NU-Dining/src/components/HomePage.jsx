@@ -11,7 +11,7 @@ import defaultAvatar from "../assets/default_avatar.jpg";
 const HomePage = () => {
     const [userProfile, setUserProfile] = useState(null);
     const [activeTab, setActiveTab] = useState('Home'); 
-    const [userNutritionFocus, setUserNutritionFocus] = useState([]);
+    const [userNutritionFocus, setUserNutritionFocus] = useState({});
     const [selectedNutrients, setSelectedNutrients] = useState({});
     const navigate = useNavigate();
 
@@ -41,24 +41,52 @@ const HomePage = () => {
         if (storedData) {
             const parsedData = JSON.parse(storedData); 
             setUserProfile(parsedData);
-
-            if (parsedData.nutritionalFocus) {
+    
+            if (typeof parsedData.nutritionalFocus === 'object' && parsedData.nutritionalFocus !== null) {
                 setUserNutritionFocus(parsedData.nutritionalFocus);
+            } else {
+                setUserNutritionFocus({});
             }
         }
     }, []);
     
+    const handleGoalChange = (nutrient, type, value) => {
+        setUserNutritionFocus((prevFocus) => ({
+            ...prevFocus,
+            [nutrient]: {
+                ...prevFocus[nutrient],
+                [type]: value, // Update either 'min' or 'max'
+            },
+        }));
+    };
 
+    const selectedNutrientType = (nutrient) => {
+        return nutrient in userNutritionFocus;
+    };
+
+    const handleNutrientFocus = (nutrient) => {
+        setUserNutritionFocus((prevFocus) => {
+            const updatedFocus = { ...prevFocus };
+    
+            if (updatedFocus[nutrient]) {
+                delete updatedFocus[nutrient];
+            } else {
+                updatedFocus[nutrient] = { min: 0, max: 0 };
+            }
+            return updatedFocus;
+        });
+    };
+
+    
+
+
+    
+    
+    
     const handleMakeMealClick = () => {
         navigate('/meal-preferences');
     };
 
-    const handleButtonClick = (nutrient) => {
-        setSelectedNutrients((prevState) => ({
-            ...prevState,
-            [nutrient]: !prevState[nutrient], // Toggle selection
-        }));
-    };
 
     const handleSubmit = () => {
 
@@ -81,6 +109,7 @@ const HomePage = () => {
                     </div>
                 );
                 case 'Nutrition':
+                    {console.log('userNutritionFocus:', userNutritionFocus)}
                     return (
                         <div>
                             <h2>Your Nutritional Goals</h2>
@@ -89,52 +118,42 @@ const HomePage = () => {
                                 <hr />
                                 {nutrients.map((nutrient) => (
                                     <div key={nutrient} className="nutrient">
-                                        {console.log(userNutritionFocus)}
-                                        {userNutritionFocus.includes(nutrient) ? (
-                                            
-                                            // If the nutrient is in userNutritionFocus, show ranges
                                             <div className="nutrient-focused">
-                                                <h3>{nutrient}</h3>
-                                                <div className="range-inputs visible">
-                                                    <section className="input-section-range">
+                                                <button
+                                                    type="button"
+                                                    className={selectedNutrientType(nutrient) ? 'nutrient-button-active' : 'nutrient-button-nonactive'}
+                                                    onClick={() => handleNutrientFocus(nutrient)}
+                                                    >
+                                                    {nutrient}
+                                                </button>
+                
+                                                <div className= {userNutritionFocus[nutrient] ? "range-inputs visible" : "range-inputs"}>
+                                                    <div className="range-pointer">▶</div>
+                                                    <section className="edit-range-section">
                                                         <label>Min:</label>
                                                         <input
                                                             type="number"
-                                                            placeholder="0"
-                                                            value={nutrition[nutrient]?.min || ""}
-                                                            onChange={(e) => handleRangeChange(nutrient, "min", e.target.value)}
+                                                            placeholder={userNutritionFocus[nutrient]?.min ?? "0"}
+                                                            value={userNutritionFocus[nutrient]?.min ?? ""}
+                                                            onChange={(e) => handleGoalChange(nutrient, "min", e.target.value)}
                                                             required
                                                         />
                                                     </section>
-                                                    <section className="input-section-range">
+                                                    <section className="edit-range-section">
                                                         <label>Max:</label>
                                                         <input
                                                             type="number"
-                                                            placeholder="0"
-                                                            value={nutrition[nutrient]?.max || ""}
-                                                            onChange={(e) => handleRangeChange(nutrient, "max", e.target.value)}
+                                                            placeholder={userNutritionFocus[nutrient]?.max ?? "0"}
+                                                            value={userNutritionFocus[nutrient]?.max ?? ""}
+                                                            onChange={(e) => handleGoalChange(nutrient, "max", e.target.value)}
+                                                            required
                                                         />
                                                     </section>
                                                 </div>
                                             </div>
-                                        ) : (
-                                            // Otherwise, display as a button
-                                            <>
-                                                
-                                                <button
-                                                    type="button"
-                                                    className={`nutrient-button ${selectedNutrients[nutrient] ? 'active' : 'non-active'}`}
-                                                    onClick={() => handleButtonClick(nutrient)}
-                                                >
-                                                    {nutrient}
-                                                </button>
-                                            </>
-                                           
-                                        )}
                                     </div>
                                 ))}
-                                <p>*Note: You can always edit your information in settings!</p>
-                                <button type="submit" className="submit-signupButton">Save and submit!</button>
+                                <button type="submit" className="save-nutritionGoals">Save!</button>
                             </form>
                         </div>
                     );               

@@ -15,7 +15,7 @@
 }
 
 .main-content{
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255);
     backdrop-filter: blur(40px);
     color: black;
     padding: 20px;
@@ -67,4 +67,80 @@
     background-color: white;
     color: black;
     cursor: pointer
+}
+
+
+/*Nutrition Focus Page Styling*/
+
+.nutrient{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.nutrient-focused{
+    display: flex;
+    align-items: center;
+}
+
+.nutrient-button-nonactive{
+    background: white;
+    color: black;
+    padding: 0.5rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgb(3, 3, 3, 0.5);
+    border-radius: 5px; 
+}
+
+.nutrient-button-active{
+    background: white;
+    color: black;
+    box-shadow: 0 0 5px rgb(3, 3, 3, 0.5);
+    padding: 0.5rem;
+    border: 2px solid rgb(0, 0, 0);
+    cursor: pointer;
+    border-radius: 5px; 
+}
+
+.nutrient-button-active:hover , .nutrient-button-nonactive:hover{
+    box-shadow: 0 0 10px rgb(3, 3, 3, 0.9);
+}
+
+.range-pointer{
+    color: rgb(0, 0, 0);
+    text-shadow: 0 0 5px rgb(3, 3, 3, 0.5);
+    margin-left: 0.2rem;
+    margin-right: -0.2rem;
+    margin-top: 0.6rem;
+}
+
+.edit-range-section{
+    display:flex;
+    align-items: center;
+    background: white;
+    box-shadow: 0 0 5px rgb(3, 3, 3, 0.5);
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.edit-range-section input{
+    border: none;
+    border-bottom: 1px solid #000000;
+    background: transparent;
+    color: black;
+    font-size: 1rem;
+    padding: 0.2rem;
+}
+
+.edit-range-section input::placeholder{
+    color: black;
+}
+
+.save-nutritionGoals{
+    width: 100%;
+    box-shadow: 0 0 5px rgb(3, 3, 3, 0.5);
+}
+
+.save-nutritionGoals:hover{
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgb(3, 3, 3, 0.9);
 }
