@@ -6,15 +6,65 @@
 
 .sidebar{
     width: 20%;
-    height: 95vh;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(40px);
     border-radius: 15px 0px 0px 15px;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20rem;
 }
 
 .main-content{
-    background: blue;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(40px);
+    color: black;
     padding: 20px;
     width: 80%;
+    border-radius: 0px 15px 15px 0px;
+}
+
+.user-profile-image{
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+
+.user-profile-image img{
+  display: inline-block;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid white;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.tabs{
+    margin-top: 1rem;
+}
+
+.tabs li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.3vw;
+    padding: 20px;
+    background-color: transparent; 
+    color: inherit;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.tabs li:hover {
+    background-color: white; 
+    color: black; 
+    cursor: pointer;
+}
+
+.tabs .active-tab{
+    background-color: white;
+    color: black;
+    cursor: pointer
 }
