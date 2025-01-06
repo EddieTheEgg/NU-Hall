@@ -4,6 +4,7 @@ import { FaHome } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 import { MdNoFood } from "react-icons/md";
 import { IoMdPerson } from "react-icons/io";
+import { saveToLocalStorage } from "../utils/localStorageUtils"; 
 
 import "../styles/homePage.css"; 
 import defaultAvatar from "../assets/default_avatar.jpg";
@@ -13,6 +14,9 @@ const HomePage = () => {
     const [activeTab, setActiveTab] = useState('Home'); 
     const [userNutritionFocus, setUserNutritionFocus] = useState({});
     const [selectedNutrients, setSelectedNutrients] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [reloadData, setReloadData] = useState(false);
+
     const navigate = useNavigate();
 
     const nutrients = [
@@ -39,7 +43,7 @@ const HomePage = () => {
     useEffect(() => {
         const storedData = localStorage.getItem('userProfile');
         if (storedData) {
-            const parsedData = JSON.parse(storedData); 
+            const parsedData = JSON.parse(storedData);
             setUserProfile(parsedData);
     
             if (typeof parsedData.nutritionalFocus === 'object' && parsedData.nutritionalFocus !== null) {
@@ -47,8 +51,10 @@ const HomePage = () => {
             } else {
                 setUserNutritionFocus({});
             }
+            console.log(parsedData);
         }
-    }, []);
+    }, [reloadData]);
+    
     
     const handleGoalChange = (nutrient, type, value) => {
         setUserNutritionFocus((prevFocus) => ({
@@ -78,19 +84,44 @@ const HomePage = () => {
     };
 
     
-
-
-    
-    
-    
     const handleMakeMealClick = () => {
         navigate('/meal-preferences');
     };
 
 
-    const handleSubmit = () => {
-
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+    
+        try {
+            const encodedEmail = encodeURIComponent(userProfile.email);
+            const response = await fetch(`http://localhost:8080/api/users/updateNutritionFocus/${encodedEmail}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userNutritionFocus),
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Data successfully saved:', data);
+                
+                const { name, email, dietaryRestrictions, nutritionalFocus } = data;
+                saveToLocalStorage("userProfile", { name, email, dietaryRestrictions, nutritionalFocus });
+    
+                setReloadData((prev) => !prev); 
+            } else {
+                console.error('Error saving data:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    
     
 
     const renderContent = () => {
@@ -136,7 +167,7 @@ const HomePage = () => {
                                                             placeholder={userNutritionFocus[nutrient]?.min ?? "0"}
                                                             value={userNutritionFocus[nutrient]?.min ?? ""}
                                                             onChange={(e) => handleGoalChange(nutrient, "min", e.target.value)}
-                                                            required
+                                                            
                                                         />
                                                     </section>
                                                     <section className="edit-range-section">
@@ -146,14 +177,17 @@ const HomePage = () => {
                                                             placeholder={userNutritionFocus[nutrient]?.max ?? "0"}
                                                             value={userNutritionFocus[nutrient]?.max ?? ""}
                                                             onChange={(e) => handleGoalChange(nutrient, "max", e.target.value)}
-                                                            required
+                                                            
                                                         />
                                                     </section>
                                                 </div>
                                             </div>
                                     </div>
                                 ))}
-                                <button type="submit" className="save-nutritionGoals">Save!</button>
+                               <button type="submit" className="save-nutritionGoals" disabled={isLoading}>
+                                    {isLoading ? 'Saving...' : 'Save!'}
+                               </button>
+
                             </form>
                         </div>
                     );               
