@@ -55,14 +55,16 @@ public class UserService {
     }
 
      //Update Nutritional Focus
-     public User updateNutritionalFocus(Long id, Map<String, Range> newNutritionalFocus) {
-        Optional<User> targetUser = userRepository.findById(id);
-        if (targetUser.isPresent()) {
-            User user = targetUser.get(); 
-            user.setNutritionalFocus(newNutritionalFocus); 
+     public User updateNutritionalFocus(String email, Map<String, Range> nutritionalFocus) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setNutritionalFocus(nutritionalFocus);
             return userRepository.save(user); 
+        } else {
+            throw new RuntimeException("User not found with email: " + email);
         }
-        return null;
     }
     
 }
