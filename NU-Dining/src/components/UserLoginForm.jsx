@@ -4,7 +4,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
 import "../styles/loginform.css"; 
 import { useSignup } from "../context/SignupContext";
-import { saveToLocalStorage } from "../utils/localStorageUtils"; // Import the utility
+import { saveToLocalStorage } from "../utils/localStorageUtils"; 
 
 
 const UserLoginForm = () => {
@@ -55,7 +55,7 @@ const UserLoginForm = () => {
     };
 
     const handleSignUp = () => {
-        navigate('/signup'); // Navigate to the signup page
+        navigate('/signup'); 
     };
 
     return (
