@@ -1,31 +1,31 @@
 package com.nudining.nudining_info.entities;
 
 public class Range {
-    private Integer min;
-    private Integer max;
+    private Double min;
+    private Double max;
 
     // Constructors
     public Range() {}
 
-    public Range(Integer min, Integer max) {
+    public Range(Double min, Double max) {
         this.min = min;
         this.max = max;
     }
 
     // Getters and Setters
-    public Integer getMin() {
+    public Double getMin() {
         return min;
     }
 
-    public void setMin(Integer min) {
+    public void setMin(Double min) {
         this.min = min;
     }
 
-    public Integer getMax() {
+    public Double getMax() {
         return max;
     }
 
-    public void setMax(Integer max) {
+    public void setMax(Double max) {
         this.max = max;
     }
 
