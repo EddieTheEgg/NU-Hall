@@ -144,3 +144,154 @@
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 10px rgb(3, 3, 3, 0.9);
 }
+
+/*Dietary Restriction Page Styling*/
+
+.dietary-restriction-form-v2{
+    width: 100%; 
+    max-width: 800px;
+    padding: 20px;
+    border: 0.5px solid #ffffff; 
+    border-radius: 15px;
+    position: absolute; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    color: black;
+}
+
+.dietary-restriction-form-v2 h3{
+    margin-top: 1rem;
+}
+
+
+.category-label{
+    color: black;
+}
+
+.button-selected-v2{
+    background: white;
+    color: black;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    border: black solid 2px;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px; 
+}
+
+.button-non-selected-v2{
+    background: white;
+    color: black;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px; 
+}
+
+.button-non-selected-v2:hover, .button-selected-v2:hover{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+
+.ingredient-container{
+    margin-top: 0.5rem;
+}
+
+.ingredient-input{
+    height: 100%;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 1px solid rgb(0, 0, 0);
+    border-radius: 5px;
+    font-size: 0.8rem;
+    color: rgb(0, 0, 0);
+    padding-left: 1.8rem;
+    padding-right: 30px;
+    margin-top: 0.3rem;
+}
+
+.ingredient-input::placeholder{
+    color: rgb(0, 0, 0);
+}
+
+.input-section{
+    position: relative;
+    margin-left: 0.2rem;
+}
+
+.ingredient-container .icon{
+    position: absolute;
+    top: 0.6rem;
+    left: 0.3rem;
+    font-size: 1.3rem;
+}
+
+
+.add-icon, .remove-icon{
+    position: absolute;
+    top: 0.7rem;
+    left: 12.3rem;
+    font-size: 1.3rem;
+}
+
+.add-icon:hover{
+    cursor: pointer;
+    background: transparent;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 1))
+}
+
+.remove-ingredient{
+    background-color: white; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    color: black;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px; 
+    width: auto;
+}
+
+
+.remove-ingredient:hover {
+    text-decoration: line-through; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  }
+
+.ingredients-instruction{
+    margin-bottom: -0.5rem;
+}
+
+.ingredient-added{
+    display: flex;
+    flex-wrap: wrap
+}
+
+.next-button-part2-v2{
+    margin-top: 0.5rem;
+    height: 100%;
+    background: rgb(0, 0, 0);
+    border: none;
+    outline: none;  
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: white;
+    margin-left: 42rem;
+}
+
+.next-button-part2-v2:hover{
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8), 
+                0 0 10px rgba(62, 61, 61, 0.6), 
+                0 0 15px rgba(121, 121, 121, 0.4);
+    cursor: pointer;
+}

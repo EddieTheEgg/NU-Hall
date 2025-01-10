@@ -4,6 +4,8 @@ import { FaHome } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 import { MdNoFood } from "react-icons/md";
 import { IoMdPerson } from "react-icons/io";
+import { LuCirclePlus } from "react-icons/lu";
+import { IoCheckmarkCircle, IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { saveToLocalStorage } from "../utils/localStorageUtils"; 
 
 import "../styles/homePage.css"; 
@@ -13,9 +15,14 @@ const HomePage = () => {
     const [userProfile, setUserProfile] = useState(null);
     const [activeTab, setActiveTab] = useState('Home'); 
     const [userNutritionFocus, setUserNutritionFocus] = useState({});
-    const [selectedNutrients, setSelectedNutrients] = useState({});
+    const [userDietaryRestrictions, setUserDietaryRestrictions] = useState({});
+    const [allergies, setAllergies] = useState([]);
+    const [proteinPreferences, setProteinPreferences] = useState([]);
+    const [lifestylePreferences, setLifestylePreferences] = useState([]);
+    const [restrictedIngredients, setRestrictedIngredients] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [reloadData, setReloadData] = useState(false);
+    const [newIngredient, setNewIngredient] = useState("");
 
     const navigate = useNavigate();
 
@@ -50,6 +57,20 @@ const HomePage = () => {
                 setUserNutritionFocus(parsedData.nutritionalFocus);
             } else {
                 setUserNutritionFocus({});
+            }
+
+            if (typeof parsedData.dietaryRestrictions === 'object' && parsedData.dietaryRestrictions !== null) {
+                setUserDietaryRestrictions(parsedData.dietaryRestrictions);
+                setAllergies(parsedData.dietaryRestrictions.allergies);
+                setProteinPreferences(parsedData.dietaryRestrictions.proteinPreferences);
+                setLifestylePreferences(parsedData.dietaryRestrictions.lifestylePreferences);
+                setRestrictedIngredients(parsedData.dietaryRestrictions.restrictedIngredients);
+            } else{
+                setUserDietaryRestrictions({
+                    allergies: [], 
+                    proteinPreferences: [],
+                    lifestylePreferences: [],
+                    restrictedIngredients: []}); 
             }
             console.log(parsedData);
         }
@@ -88,6 +109,31 @@ const HomePage = () => {
         navigate('/meal-preferences');
     };
 
+    //This is specifically for the dietary restricton form of the homepage
+
+    const handleCheckboxChange = (setState, value) => () => {
+        setState((prev) => 
+            prev.includes(value) 
+                ? prev.filter((item) => item !== value) 
+                : [...prev, value] 
+        ); 
+    };
+
+    const userSelectedRestriction = (item, selectedItems) => selectedItems.includes(item);
+
+    const addIngredient = () => {
+        if (newIngredient.trim() !== "") {
+            setRestrictedIngredients((prev) => [...prev, newIngredient.trim()]);
+            setNewIngredient("");
+        } else {
+            console.log("No ingredient entered.");
+        }
+    };
+
+    const removeIngredient = (ingredient) => {
+        setRestrictedIngredients((prev) => prev.filter((item) => item !== ingredient));
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -120,6 +166,39 @@ const HomePage = () => {
             setIsLoading(false);
         }
     };
+
+    const handleSubmitDietary = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+    
+        try {
+            const encodedEmail = encodeURIComponent(userProfile.email);
+            const response = await fetch(`http://localhost:8080/api/users/updateNutritionFocus/${encodedEmail}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userNutritionFocus),
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Data successfully saved:', data);
+                
+                const { name, email, dietaryRestrictions, nutritionalFocus } = data;
+                saveToLocalStorage("userProfile", { name, email, dietaryRestrictions, nutritionalFocus });
+    
+                setReloadData((prev) => !prev); 
+            } else {
+                console.error('Error saving data:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
     
     
     
@@ -195,7 +274,85 @@ const HomePage = () => {
                 return (
                     <div>
                         <h2>Dietary Restrictions</h2>
-                        <p>Customize your dietary preferences...</p>
+                        <p>Edit your dietary restrictions here and remember to save!</p>
+                        <form onSubmit={handleSubmitDietary} className="dietary-restriction-form-v2">
+
+                            <h3 className="category-label">Allergies:</h3>
+                            <hr />
+                            {["Gluten", "Soy", "Dairy", "Egg", "Peanuts", "Tree Nuts", "Sesame", "Mustard", "Celery", "Sulphites", "MSG", "Onion", "Garlic", "Seafood/Fish"].map((item) => (
+                                <button
+                                    key={item}
+                                    type="button"
+                                    onClick={handleCheckboxChange(setAllergies, item)}
+                                    className={userSelectedRestriction(item, allergies) ? 'button-selected-v2' : 'button-non-selected-v2'}
+                                >
+                                    {userSelectedRestriction(item, allergies) ? <IoCheckmarkCircle className= "checkmark-alignment-selected" /> : <IoCheckmarkCircleOutline className= "checkmark-alignment" />}
+                                    {item}
+                                </button>
+                            ))}
+
+                            <h3>Proteins:</h3>
+                            <hr />
+                            {["Avoid Beef", "Avoid Pork", "Avoid Poultry", "Avoid Alcohol"].map((item) => (
+                                <button
+                                    key={item}
+                                    type="button"
+                                    onClick={handleCheckboxChange(setProteinPreferences, item)}
+                                    className={userSelectedRestriction(item, proteinPreferences) ? 'button-selected-v2' : 'button-non-selected-v2'}
+                                >
+                                    {userSelectedRestriction(item, proteinPreferences) ? <IoCheckmarkCircle className= "checkmark-alignment-selected" /> : <IoCheckmarkCircleOutline className= "checkmark-alignment" />}
+                                    {item}
+                                </button>
+                            ))}
+
+                            <h3>Lifestyle Preferences:</h3>
+                            <hr />
+                            {["Vegetarian", "Vegan"].map((item) => (
+                                <button
+                                    key={item}
+                                    type="button"
+                                    onClick={handleCheckboxChange(setLifestylePreferences, item)}
+                                    className={userSelectedRestriction(item, lifestylePreferences) ? 'button-selected-v2' : 'button-non-selected-v2'}
+                                >
+                                    {userSelectedRestriction(item, lifestylePreferences) ? <IoCheckmarkCircle className="checkmark-alignment-selected" /> : <IoCheckmarkCircleOutline className = "checkmark-alignment" />}
+                                    {item}
+                                </button>
+                            ))}
+
+                            <h3>Other Restrictions?</h3>
+                            <hr />
+                            <p className= "ingredients-instruction">Write the unwanted ingredient's name just as displayed in Northeastern's Dining Menu!</p>
+                            <div className="ingredient-container">
+                                <section className = "ingredient-added">
+                                    {restrictedIngredients.map((ingredient, index) => (
+                                        <div key={index} className="ingredient-bubble">
+                                            <button 
+                                                type="button" 
+                                                className="remove-ingredient" 
+                                                onClick={() => removeIngredient(ingredient)}
+                                            >
+                                            {ingredient}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </section>
+                                <section className= "input-section">
+                                    <MdNoFood className= "icon" />
+                                    <input 
+                                        type="text" 
+                                        value={newIngredient} 
+                                        onChange={(e) => setNewIngredient(e.target.value)} 
+                                        placeholder="Ingredient" 
+                                        className="ingredient-input"
+                                    />
+                                    <LuCirclePlus className = "add-icon" onClick={addIngredient}/>
+                                </section>
+                            
+                                <button type="submit" className = "next-button-part2-v2">Save!</button>
+                            </div>      
+
+                            
+                        </form>
                     </div>
                 );
             case 'Personal':

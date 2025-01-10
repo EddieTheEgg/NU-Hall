@@ -86,10 +86,17 @@ public class UserController {
                                                             ));
     
         user.setNutritionalFocus(updatedFocus); 
-    
         User updatedUser = userService.saveUser(user);
-    
         return ResponseEntity.ok(updatedUser);
     }
+
+    @PutMapping("/updateDietaryRestrictions/{email}")
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<User> updateDietaryRestrictionByEmail(
+
+
+    
+    )
+    
     
 } 

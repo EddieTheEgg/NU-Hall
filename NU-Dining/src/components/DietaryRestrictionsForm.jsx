@@ -29,8 +29,7 @@ const DietaryRestrictionsForm = () => {
             prev.includes(value) 
                 ? prev.filter((item) => item !== value) 
                 : [...prev, value] 
-        );
-        
+        ); 
     };
 
     const handleSubmit = (e) => {
