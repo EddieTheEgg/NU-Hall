@@ -170,15 +170,24 @@ const HomePage = () => {
     const handleSubmitDietary = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+
+        const newDietaryRestrictions = {
+            allergies,
+            proteinPreferences,
+            lifestylePreferences,
+            restrictedIngredients,
+        };
+
+        console.log("New Dietary Restrictions: ", newDietaryRestrictions);
     
         try {
             const encodedEmail = encodeURIComponent(userProfile.email);
-            const response = await fetch(`http://localhost:8080/api/users/updateNutritionFocus/${encodedEmail}`, {
+            const response = await fetch(`http://localhost:8080/api/users/updateDietaryRestrictions/${encodedEmail}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userNutritionFocus),
+                body: JSON.stringify(newDietaryRestrictions),
             });
     
             if (response.ok) {
