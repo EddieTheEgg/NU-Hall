@@ -48,7 +48,7 @@ def generate_url(location_name, period_name):
     
     if location_id and period_id:
         # Construct URL using the selected location and period
-        url = f"https://api.dineoncampus.com/v1/location/{location_id}/periods/{period_id}"
+        url = f"https://api.dineoncampus.com/v1/location/{location_id}/periods?platform=0&date={period_id}"
         return url
     else:
         print("Invalid location or period")
