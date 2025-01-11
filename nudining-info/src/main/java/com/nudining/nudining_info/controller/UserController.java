@@ -84,7 +84,7 @@ public class UserController {
                                                                     Map.Entry::getKey, 
                                                                     entry -> new Range(entry.getValue().get("min"), entry.getValue().get("max"))
                                                             ));
-    
+        
         user.setNutritionalFocus(updatedFocus); 
         User updatedUser = userService.saveUser(user);
         return ResponseEntity.ok(updatedUser);
@@ -93,10 +93,21 @@ public class UserController {
     @PutMapping("/updateDietaryRestrictions/{email}")
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<User> updateDietaryRestrictionByEmail(
-
-
-    
-    )
-    
+            @PathVariable String email,
+            @RequestBody Map<String, Object> newDietaryRestrictions) {
+                Optional<User> userOptional = userService.findUserByEmail(email);
+                
+                System.out.println(userOptional);
+        
+                if (userOptional.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                }
+            
+                User user = userOptional.get();
+                user.setDietaryRestrictions(newDietaryRestrictions);
+                System.out.println(newDietaryRestrictions);
+                User updatedUser = userService.saveUser(user);
+                return ResponseEntity.ok(updatedUser);
+            }
     
 } 
