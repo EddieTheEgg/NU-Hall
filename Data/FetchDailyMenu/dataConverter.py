@@ -6,7 +6,7 @@ locations = ["Stetson_East", "Stetson_West", "IV"]
 periods = ["Breakfast", "Lunch", "Dinner"]
 
 # Test Cases
-date = '2024-12-4'
+date = '2025-1-11'
 
 # Combine all dining options into one CSV file
 all_menu_items = []  # List to hold all menu items
