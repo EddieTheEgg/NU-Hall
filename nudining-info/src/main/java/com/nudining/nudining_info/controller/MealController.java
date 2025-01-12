@@ -4,7 +4,6 @@ import com.nudining.nudining_info.entities.Meal;
 import com.nudining.nudining_info.entities.User;
 import com.nudining.nudining_info.service.MealService;
 import com.nudining.nudining_info.entities.GenerateMealsRequest;
-import com.nudining.nudining_info.entities.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

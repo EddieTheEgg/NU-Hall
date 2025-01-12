@@ -1,17 +1,18 @@
 package com.nudining.nudining_info.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.Table; 
 
 @Entity
 @Table(name = "daily_menu")
 public class Meal {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // This generates a unique ID for each Meal
+    private Long id; // This is the primary key for the Meal entity
     
     private String location;
     private String period;
@@ -54,13 +55,6 @@ public class Meal {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getPeriod() {
         return period;
