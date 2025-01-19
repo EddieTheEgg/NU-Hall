@@ -1,12 +1,15 @@
 import json
 import pandas as pd
 from api_db import fetch_data  # Import the function from api-db.py
+import sys
 
 locations = ["Stetson_East", "Stetson_West", "IV"]
 periods = ["Breakfast", "Lunch", "Dinner"]
 
-# Test Cases
-date = '2025-1-11'
+if len(sys.argv) > 1:
+    date = sys.argv[1]
+else:
+    date = '2025-1-11' 
 
 # Combine all dining options into one CSV file
 all_menu_items = []  # List to hold all menu items
@@ -60,6 +63,14 @@ for location in locations:
         except Exception as e:
             print(f"Error fetching data for {location} during {period}: {e}")
 
-df = pd.DataFrame(all_menu_items)
+output_file_path = f"Data/FetchDailyMenu/{date}.csv"  # Relative path to the Data folder, so the csv doesn't end up in another directory
 
-df.to_csv(f'{date}.csv', index=False)
+try:
+    df = pd.DataFrame(all_menu_items)
+    if not df.empty:
+        df.to_csv(output_file_path, index=False)
+        print(f"CSV file created successfully: {output_file_path}")
+    else:
+        print("No data to write to CSV.")
+except Exception as e:
+    print(f"Error writing CSV file: {e}")
