@@ -23,6 +23,9 @@ const HomePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [reloadData, setReloadData] = useState(false);
     const [newIngredient, setNewIngredient] = useState("");
+    const [editableName, setEditableName] = useState(userProfile?.name);
+    const [editableEmail, setEditableEmail] = useState(userProfile?.email);
+    const [editablePassword, setEditablePassword] = useState("");
 
     const navigate = useNavigate();
 
@@ -212,6 +215,36 @@ const HomePage = () => {
     
     
 
+    const handleSavePersonalInfo = async () => {
+        const updatedUserProfile = {
+            ...userProfile,
+            name: editableName,
+            email: editableEmail,
+            password: editablePassword,
+        };
+        
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/update/${userProfile.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedUserProfile),
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                saveToLocalStorage("userProfile", data);
+                setUserProfile(data);
+                console.log('User information updated successfully');
+            } else {
+                console.error('Error updating user information:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     const renderContent = () => {
         switch (activeTab) {
             case 'Home':
@@ -366,10 +399,51 @@ const HomePage = () => {
                 );
             case 'Personal':
                 return (
-                    <div>
-                        <h2>Personal Information</h2>
-                        <p>Update your personal details...</p>
-                    </div>
+                    <>
+                        <div>
+                            <h2>Personal Information</h2>
+                            <p>Update your personal information here! Remember to save!</p>
+                            <hr />
+                        </div>
+                        <section className = "personal-info-edit">
+                            <section className="personal-edit-input">
+                                <h3>Name: </h3>
+                                <section>
+                                    <input
+                                        type="text"
+                                        placeholder = {userProfile.name}
+                                        value={editableName}
+                                        onChange={(e) => setEditableName(e.target.value)}
+                                        required
+                                    />
+                                </section>
+                            </section>
+                            <section className="personal-edit-input">
+                                <h3>Email: </h3>
+                                <div>
+                                    <input
+                                        type="email"
+                                        placeholder = {userProfile.email}
+                                        value={editableEmail}
+                                        onChange={(e) => setEditableEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </section>
+                            <section className="personal-edit-input">
+                                <h3>Password: </h3>
+                                <div>
+                                    <input
+                                        type="password"
+                                        value={editablePassword}
+                                        onChange={(e) => setEditablePassword(e.target.value)}
+                                    />
+                                </div>
+                            </section>
+                        </section>
+                       
+                        <button onClick={handleSavePersonalInfo} className="save-personal-info-button">Save!</button>
+                    </>
                 );
             default:
                 return <div><h2>Welcome!</h2></div>;
