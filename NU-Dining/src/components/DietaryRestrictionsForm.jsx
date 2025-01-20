@@ -124,7 +124,7 @@ const DietaryRestrictionsForm = () => {
                         <div key={index} className="ingredient-bubble">
                             <button 
                                 type="button" 
-                                className="remove-ingredient" 
+                                className="remove-ingredient-signup" 
                                 onClick={() => removeIngredient(ingredient)}
                             >
                             {ingredient}
@@ -132,14 +132,14 @@ const DietaryRestrictionsForm = () => {
                         </div>
                     ))}
                 </section>
-                <section className= "input-section">
+                <section className= "input-section-signup">
                     <MdNoFood className= "icon" />
                     <input 
                         type="text" 
                         value={newIngredient} 
                         onChange={(e) => setNewIngredient(e.target.value)} 
                         placeholder="Ingredient" 
-                        className="ingredient-input"
+                        className="ingredient-input-signup"
                     />
                     <LuCirclePlus className = "add-icon" onClick={addIngredient}/>
                 </section>
