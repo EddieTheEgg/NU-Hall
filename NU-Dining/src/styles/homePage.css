@@ -69,6 +69,34 @@
     cursor: pointer
 }
 
+/*Personal Page Styling*/
+.personal-edit-input{
+    display:flex;
+    align-items: center;
+    background: white;
+    padding: 0.3rem;
+    border-radius: 5px;
+}
+
+.personal-edit-input section input::placeholder{
+    color: black;
+}
+
+
+.personal-edit-input input{
+    border: none;
+    border-bottom: 1px solid #000000;
+    background: transparent;
+    color: black;
+    font-size: 1rem;
+    padding: 0.2rem;
+    width: 15vw;
+}
+
+.personal-edit-input input::placeholder{
+    color: rgb(102, 102, 102);
+}
+
 
 /*Nutrition Focus Page Styling*/
 
@@ -148,15 +176,9 @@
 /*Dietary Restriction Page Styling*/
 
 .dietary-restriction-form-v2{
-    width: 100%; 
-    max-width: 800px;
     padding: 20px;
     border: 0.5px solid #ffffff; 
     border-radius: 15px;
-    position: absolute; 
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
     color: black;
 }
@@ -198,6 +220,8 @@
 
 
 .ingredient-container{
+    display: flex;
+    flex-direction: column;
     margin-top: 0.5rem;
 }
 
@@ -278,7 +302,6 @@
     height: 100%;
     background: rgb(0, 0, 0);
     border: none;
-    outline: none;  
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding-left: 1.5rem;
@@ -286,7 +309,7 @@
     cursor: pointer;
     font-size: 1rem;
     color: white;
-    margin-left: 42rem;
+    margin-left: auto;
 }
 
 .next-button-part2-v2:hover{
