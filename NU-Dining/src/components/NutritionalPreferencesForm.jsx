@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSignup } from '../context/SignupContext.jsx'; 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { saveToLocalStorage } from '../utils/localStorageUtils';
 import "../styles/nutritionalform.css"; 
 
 const NutritionalPreferencesForm = () => {
@@ -74,6 +75,7 @@ const NutritionalPreferencesForm = () => {
         try {
             await axios.post("http://localhost:8080/api/users/addUser", finalData);
             setSignupData(finalData); 
+            saveToLocalStorage("userProfile", finalData);
             navigate('/home'); 
         } catch (error) {
             console.error("Signup error:", error);
