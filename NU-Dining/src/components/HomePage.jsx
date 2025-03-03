@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
@@ -363,7 +363,7 @@ const HomePage = () => {
 
                             <h3>Other Restrictions?</h3>
                             <hr />
-                            <p className= "ingredients-instruction">Write the unwanted ingredient's name just as displayed in Northeastern's Dining Menu!</p>
+                            <p className= "ingredients-instruction">Write the unwanted ingredient&apos;s name just as displayed in Northeastern&apos;s Dining Menu!</p>
                             <div className="ingredient-container">
                                 <section className = "ingredient-added">
                                     {restrictedIngredients.map((ingredient, index) => (
