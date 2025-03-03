@@ -1,17 +1,20 @@
 import requests
-import brotli 
 import json
-import pandas as pd
+import time
 
 headers = {
     'Accept': 'application/json, text/plain, */*',
     'Accept-Encoding': 'gzip, deflate, br',  # Indicate that we expect Brotli encoding
     'Accept-Language': 'en-US,en;q=0.9',
     'Origin': 'https://nudining.com',
+    'Referer': 'https://nudining.com/',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Sec-Fetch-Dest': 'empty',
     'Sec-Fetch-Mode': 'cors',
     'Sec-Fetch-Site': 'cross-site',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1.1 Safari/605.1.15'
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache'
 }
 
 locationID = {
@@ -21,22 +24,22 @@ locationID = {
 }
 periods = {
     "Stetson_East": {
-        "Breakfast": '66b279bae45d4306779faaae',
-        "Lunch": '66b279bae45d4306779faaca',
-        "Dinner": '66b279bae45d4306779faabc',
-        "Everyday": '66b279bae45d4306779faacb',
+        "Breakfast": '67585060c625afb54e6c1e82',
+        "Lunch": '67585060c625afb54e6c1e82',
+        "Dinner": '67585060c625afb54e6c1e6a',
+        "Everyday": '67585060c625afb54e6c1e6b',
     },
 
     "Stetson_West" : {
-        "Lunch": '6667541f351d530584146022',
-        "Dinner": '6667541f351d53058414602c',
-        "Everyday": '6667541f351d53058414602d'
+        "Lunch": '677208f1c625af05f6230b74',
+        "Dinner": '677208f1c625af05f6230b7e',
+        "Everyday": '677208f1c625af05f6230b7f'
     },
     "IV" : {
-        "Breakfast": '66c3ae9a351d530107802cb1',
-        "Lunch": '66c3ae9a351d530107802cc0',
-        "Dinner": '66c3ae9a351d530107802ccf',
-        "Everyday": '66c3ae9a351d530107802cd0',
+        "Breakfast": '6768c747e45d430840197c7d',
+        "Lunch": '6768c747e45d430840197c77',
+        "Dinner": '6768c747e45d430840197c8e',
+        "Everyday": '6768c747e45d430840197c7e',
     },
 }
 
@@ -46,34 +49,34 @@ def generate_url(location_name, period_name):
     location_id = locationID.get(location_name)
     period_id = periods.get(location_name, {}).get(period_name)
     
-    if location_id and period_id:
-        # Construct URL using the selected location and period
-        url = f"https://api.dineoncampus.com/v1/location/{location_id}/periods?platform=0&date={period_id}"
-        return url
-    else:
-        print("Invalid location or period")
-        return None
+    if not location_id or not period_id:
+        raise ValueError(f"Invalid location '{location_name}' or period '{period_name}'")
+    
+    # Construct URL using the selected location and period
+    base_url = "https://api.dineoncampus.com/v1/location"
+    url = f"{base_url}/{location_id}/periods"
+    return url
 
 
 
 def fetch_data(location_name, period_name, date):
-    url = generate_url(location_name, period_name)
-    params = {
-        'platform': 0,
-        'date': date,
-    }
+    try:
+        url = generate_url(location_name, period_name)
+        params = {
+            'platform': 0,
+            'date': date,
+        }
 
-    data = None 
-    response = requests.get(url, headers=headers, params=params)
-
-    if response.status_code == 200:
-        try:
-            decompressed_data = response.content.decode('utf-8')
-            data = json.loads(decompressed_data) 
-        except ValueError as e:
-            print(f"Error parsing JSON: {e}")
-
-    return data  # Return the fetched data
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        response.raise_for_status()
+        return response.json()
+                
+    except ValueError as e:
+        print(f"Configuration error: {str(e)}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error fetching data for {location_name} during {period_name}: {str(e)}")
+        return None
 
 
 '''
