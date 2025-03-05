@@ -70,25 +70,29 @@
 }
 
 /*Personal Page Styling*/
-.personal-edit-input{
+.personal-edit-name{
     display:flex;
     align-items: center;
     background: white;
-    padding: 0.3rem;
     border-radius: 5px;
 }
 
 .display-userName{
-    display: flex;
     align-items: center;
     gap: 0.2rem;
 }
+
+
 
 .edit-userName{
     margin-left: auto;
 }
 
-
+.personal-info-edit {
+    display:flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
 
 .personal-edit-input section input::placeholder{
     color: black;

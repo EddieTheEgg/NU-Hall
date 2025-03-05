@@ -442,7 +442,7 @@ const HomePage = () => {
                             <hr />
                         </div>
                         <section className = "personal-info-edit">
-                            <section className="personal-edit-input">
+                            <section className="personal-edit-name">
                             <section className="display-userName">
                                  <h3>Name: </h3>
                                 <div>
