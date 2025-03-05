@@ -26,6 +26,8 @@ const HomePage = () => {
     const [editableName, setEditableName] = useState(userProfile?.name);
     const [editableEmail, setEditableEmail] = useState(userProfile?.email);
     const [editablePassword, setEditablePassword] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newName, setNewName] = useState(userProfile?.name);
 
     const navigate = useNavigate();
 
@@ -54,7 +56,9 @@ const HomePage = () => {
         const storedData = localStorage.getItem('userProfile');
         if (storedData) {
             const parsedData = JSON.parse(storedData);
+            console.log(parsedData);
             setUserProfile(parsedData);
+
     
             if (typeof parsedData.nutritionalFocus === 'object' && parsedData.nutritionalFocus !== null) {
                 setUserNutritionFocus(parsedData.nutritionalFocus);
@@ -245,6 +249,19 @@ const HomePage = () => {
         }
     };
 
+    const handleChangeNameClick = () => {
+        setNewName(userProfile.name);
+        setIsModalOpen(true);
+    };
+
+    const handleModalSave = () => {
+        setUserProfile((prev) => ({ ...prev, name: newName }));
+        saveToLocalStorage("userProfile", { ...userProfile, name: newName });
+
+        
+        setIsModalOpen(false);
+    };
+
     const renderContent = () => {
         switch (activeTab) {
             case 'Home':
@@ -407,37 +424,24 @@ const HomePage = () => {
                         </div>
                         <section className = "personal-info-edit">
                             <section className="personal-edit-input">
-                                <h3>Name: </h3>
-                                <section>
-                                    <input
-                                        type="text"
-                                        placeholder = {userProfile.name}
-                                        value={editableName}
-                                        onChange={(e) => setEditableName(e.target.value)}
-                                        required
-                                    />
-                                </section>
+                            <section className="display-userName">
+                                 <h3>Name: </h3>
+                                <div>
+                                    {userProfile.name}
+                                </div>
+                            </section>
+                                <button className="edit-userName" onClick={handleChangeNameClick}>Change Name</button>
                             </section>
                             <section className="personal-edit-input">
                                 <h3>Email: </h3>
                                 <div>
-                                    <input
-                                        type="email"
-                                        placeholder = {userProfile.email}
-                                        value={editableEmail}
-                                        onChange={(e) => setEditableEmail(e.target.value)}
-                                        required
-                                    />
+                                    {userProfile.email}
                                 </div>
                             </section>
                             <section className="personal-edit-input">
                                 <h3>Password: </h3>
                                 <div>
-                                    <input
-                                        type="password"
-                                        value={editablePassword}
-                                        onChange={(e) => setEditablePassword(e.target.value)}
-                                    />
+                                    *********
                                 </div>
                             </section>
                         </section>
@@ -493,6 +497,28 @@ const HomePage = () => {
                 {renderContent()}
             </section>
         </section>
+        {isModalOpen && (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                <section className="modal-topbar-username">
+                    <h3>Change Name</h3>
+                    <button className="close-modal" onClick={() => setIsModalOpen(false)}>✖</button>
+                </section>
+                <section className="modal-bottombar-username">
+                    <div>Please enter your new name</div>
+                    <input 
+                        className="edit-nameInput"
+                        type="text" 
+                        value={newName} 
+                        onChange={(e) => setNewName(e.target.value)} 
+                        placeholder= {userProfile.name} 
+                        />
+                    <button className= "save-newUsername" onClick={handleModalSave}>Save</button>
+                </section>
+                   
+                </div>
+            </div>
+        )}
         </>
     );
 };

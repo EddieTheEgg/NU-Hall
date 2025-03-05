@@ -122,9 +122,9 @@ public class DailyDataScheduler {
             System.out.println("Old data truncated from the daily_menu table.");
             System.out.println("Expected CSV file path: " + CSV_filePath);
 
-            // Extract the host and database name from the dataSourceUrl
+            // Extract the host and database name from the dataSourceUrl (For AWS, when we use local need to modify this)
             String[] urlParts = dataSourceUrl.split("/");
-            String databaseName = urlParts[urlParts.length - 1].split("\\?")[0]; 
+            String databaseName = urlParts[3].split("\\?")[0]; 
             String host = urlParts[2].split(":")[0];
 
             // Format command to be ready for import
