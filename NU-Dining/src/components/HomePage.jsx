@@ -254,10 +254,29 @@ const HomePage = () => {
         setIsModalOpen(true);
     };
 
-    const handleModalSave = () => {
-        setUserProfile((prev) => ({ ...prev, name: newName }));
-        saveToLocalStorage("userProfile", { ...userProfile, name: newName });
+    const handleModalSave = async () => {
+        const updatedUserProfile = { ...userProfile, name: newName };
+        
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/update/${userProfile.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedUserProfile),
+            });
 
+            if (response.ok) {
+                const data = await response.json();
+                saveToLocalStorage("userProfile", data);
+                setUserProfile(data);
+                console.log('User information updated successfully');
+            } else {
+                console.error('Error updating user information:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
         
         setIsModalOpen(false);
     };
@@ -505,7 +524,7 @@ const HomePage = () => {
                     <button className="close-modal" onClick={() => setIsModalOpen(false)}>✖</button>
                 </section>
                 <section className="modal-bottombar-username">
-                    <div>Please enter your new name</div>
+                    <div>Please enter your new name </div>
                     <input 
                         className="edit-nameInput"
                         type="text" 
@@ -513,7 +532,7 @@ const HomePage = () => {
                         onChange={(e) => setNewName(e.target.value)} 
                         placeholder= {userProfile.name} 
                         />
-                    <button className= "save-newUsername" onClick={handleModalSave}>Save</button>
+                    <button className= "save-newUsername"onClick={handleModalSave}>Save</button>
                 </section>
                    
                 </div>
