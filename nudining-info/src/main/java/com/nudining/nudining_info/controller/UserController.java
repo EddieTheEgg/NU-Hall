@@ -30,6 +30,31 @@ public class UserController {
     public User addUser(@RequestBody User user) {
         return userService.saveUser(user);
     }
+
+    //Update User
+    @CrossOrigin(origins = "http://localhost:5173")
+    @PutMapping("/update/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        try {
+            Optional<User> existingUser = userService.findUserByID(id);
+            if (existingUser.isPresent()) {
+                User user = existingUser.get();
+                user.setName(updatedUser.getName());
+                user.setEmail(updatedUser.getEmail());
+                //typically when updating, the password would not be saved in frontend so its null.
+                if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                    user.setPassword(updatedUser.getPassword());
+                }
+                User savedUser = userService.saveUser(user);
+                return ResponseEntity.ok(savedUser);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            System.err.println("Error updating user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
     
     //Find user by ID
     @GetMapping("/getUserById/{id}")
@@ -57,7 +82,7 @@ public class UserController {
         Optional<User> user = userService.findUserByEmail(email);
         
         if (user.isPresent() && user.get().getPassword().equals(password)) {
-            return ResponseEntity.ok(user.get()); // Return the user object
+            return ResponseEntity.ok(user.get()); 
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
