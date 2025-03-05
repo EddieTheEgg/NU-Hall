@@ -26,13 +26,14 @@ const UserLoginForm = () => {
                 console.log('Login Response Data:', response.data); 
 
                 // Extract necessary fields from the response
-                const { name, email, dietaryRestrictions, nutritionalFocus } = response.data;
-                saveToLocalStorage("userProfile", { name, email, dietaryRestrictions, nutritionalFocus });
+                const {id, name, email, dietaryRestrictions, nutritionalFocus } = response.data;
+                saveToLocalStorage("userProfile", { id, name, email, dietaryRestrictions, nutritionalFocus });
                 
 
                 // Save to SignupContext (Might delete since not needed for logging in?)
                 setSignupData((prevData) => ({
                     ...prevData,
+                    id,
                     name,
                     password,
                     email,
