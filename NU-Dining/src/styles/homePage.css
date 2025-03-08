@@ -401,11 +401,11 @@
     outline: none;
 }
 
-.save-newUsername, .verifyPasswordCorrect {
+.save-newUsername, .verifyPasswordCorrect, .save-newEmail {
     margin-left: auto;
 }
 
-.save-newUsername:hover, .verifyPasswordCorrect:hover {
+.save-newUsername:hover, .verifyPasswordCorrect:hover, .save-newEmail:hover {
     box-shadow: 0 0 10px rgb(3, 3, 3, 0.9);
     border: none;
 }

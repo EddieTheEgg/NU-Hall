@@ -278,6 +278,7 @@ const HomePage = () => {
                 if (isVerified) {
                     setIsVerifyPassword(false);
                     setIsModalOpenEmail(true);
+                    setPotentialVerifyPassword("");
                     setVerifiedPasswordMessage("")
                 } else {
                     setVerifiedPasswordMessage("*Incorrect password. Please try again.");
@@ -317,6 +318,36 @@ const HomePage = () => {
         
         setIsModalOpen(false);
     };
+
+    const handleModalSaveEmail = async () => {
+        const updatedUserProfile = {
+            ...userProfile,
+            email: newEmail,
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/update/${userProfile.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedUserProfile),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                saveToLocalStorage("userProfile", data);
+                setUserProfile(data);
+                console.log('User information updated successfully');
+            } else {
+                console.error('Error updating user information:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        
+        setIsModalOpenEmail(false);
+    }
 
     const renderContent = () => {
         switch (activeTab) {
@@ -583,7 +614,12 @@ const HomePage = () => {
                 <div className="passwordVerify-content">
                     <section className="passwordVerify-topbar">
                         <h3>Enter Password</h3>
-                        <button className="close-verifyPassword" onClick={() => setIsVerifyPassword(false)}>✖</button>
+                        <button 
+                        className="close-verifyPassword" 
+                        onClick={() => 
+                        {setIsVerifyPassword(false); 
+                        setPotentialVerifyPassword("");}}>
+                        ✖</button>
                     </section>
                     <section className = "passwordVerify-bottombar">
                         <div>To change email/password, please enter your current password</div>
@@ -597,9 +633,30 @@ const HomePage = () => {
                          />
                          <button className = "verifyPasswordCorrect" onClick={handleVerifyPasswordCheck}>Enter</button>
                     </section>
-                    
                 </div>
 
+            </div>
+        )}
+        {isModalOpenEmail && (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                <section className="modal-topbar-username">
+                    <h3>Change Email</h3>
+                    <button className="close-modal" onClick={() => setIsModalOpenEmail(false)}>✖</button>
+                </section>
+                <section className="modal-bottombar-username">
+                    <div>Please enter your new email </div>
+                    <input 
+                        className="edit-nameInput"
+                        type="text" 
+                        value={newEmail} 
+                        onChange={(e) => setNewEmail(e.target.value)} 
+                        placeholder= {userProfile.email} 
+                        />
+                    <button className= "save-newEmail"onClick={handleModalSaveEmail}>Save</button>
+                </section>
+                   
+                </div>
             </div>
         )}
         </>
