@@ -55,6 +55,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @PostMapping("/verify/{id}")
+    public boolean verifyPassword(@PathVariable Long id, @RequestBody String potentialVerifyPassword) {
+        String password = potentialVerifyPassword.replaceAll("^\"|\"$", ""); 
+        
+        Optional<User> existingUser = userService.findUserByID(id);
+        if (!existingUser.isPresent()) {
+            return false;
+        }
+        //Convert backend pass to a string in case...
+        String backendPassword = new String(existingUser.get().getPassword());
+        
+        if (backendPassword.equals(password)) {
+            return true;
+        }
+        return false;
+    }
+
     
     //Find user by ID
     @GetMapping("/getUserById/{id}")
