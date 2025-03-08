@@ -27,7 +27,12 @@ const HomePage = () => {
     const [editableEmail, setEditableEmail] = useState(userProfile?.email);
     const [editablePassword, setEditablePassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenEmail, setIsModalOpenEmail] = useState(false);
+    const [isVerifyPassword, setIsVerifyPassword] = useState(false);
+    const [newEmail, setNewEmail] = useState(userProfile?.email);
     const [newName, setNewName] = useState(userProfile?.name);
+    const [verifiedPasswordMessage, setVerifiedPasswordMessage] = useState("");
+    const [potentialVerifyPassword, setPotentialVerifyPassword] = useState("");
 
     const navigate = useNavigate();
 
@@ -254,6 +259,38 @@ const HomePage = () => {
         setIsModalOpen(true);
     };
 
+    const handleChangeEmailClick = () => {
+        setNewEmail(userProfile.email);
+        setIsVerifyPassword(true);
+    };
+
+    const handleVerifyPasswordCheck = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/verify/${userProfile.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(potentialVerifyPassword)
+            });
+            if (response.ok) {
+                const isVerified = await response.json();
+                if (isVerified) {
+                    setIsVerifyPassword(false);
+                    setIsModalOpenEmail(true);
+                    setVerifiedPasswordMessage("")
+                } else {
+                    setVerifiedPasswordMessage("*Incorrect password. Please try again.");
+                }
+            } else {
+                console.error("Server error: ", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error verifying password: ", error);
+        }
+    };
+    
+
     const handleModalSave = async () => {
         const updatedUserProfile = { ...userProfile, name: newName };
         
@@ -451,11 +488,14 @@ const HomePage = () => {
                             </section>
                                 <button className="edit-userName" onClick={handleChangeNameClick}>Change Name</button>
                             </section>
-                            <section className="personal-edit-input">
-                                <h3>Email: </h3>
-                                <div>
-                                    {userProfile.email}
-                                </div>
+                            <section className="personal-edit-email">
+                                <section className="display-personal-email">
+                                    <h3>Email: </h3>
+                                    <div>
+                                        {userProfile.email}
+                                    </div>
+                                </section>
+                                <button className="edit-email" onClick={handleChangeEmailClick}>Change Email</button>
                             </section>
                             <section className="personal-edit-input">
                                 <h3>Password: </h3>
@@ -536,6 +576,30 @@ const HomePage = () => {
                 </section>
                    
                 </div>
+            </div>
+        )}
+        {isVerifyPassword && (
+            <div className = "passwordVerify-overlay">
+                <div className="passwordVerify-content">
+                    <section className="passwordVerify-topbar">
+                        <h3>Enter Password</h3>
+                        <button className="close-verifyPassword" onClick={() => setIsVerifyPassword(false)}>✖</button>
+                    </section>
+                    <section className = "passwordVerify-bottombar">
+                        <div>To change email/password, please enter your current password</div>
+                        <div className="passwordVerify-message">{verifiedPasswordMessage}</div>
+                        <input
+                            className = "passwordVerify-input"
+                            type = "password"
+                            value = {potentialVerifyPassword}
+                            onChange = {(e) => setPotentialVerifyPassword(e.target.value)}
+                            placeholder = "*******"
+                         />
+                         <button className = "verifyPasswordCorrect" onClick={handleVerifyPasswordCheck}>Enter</button>
+                    </section>
+                    
+                </div>
+
             </div>
         )}
         </>
