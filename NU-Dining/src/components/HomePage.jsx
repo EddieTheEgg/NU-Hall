@@ -31,6 +31,7 @@ const HomePage = () => {
     const [isVerifyPassword, setIsVerifyPassword] = useState(false);
     const [newEmail, setNewEmail] = useState(userProfile?.email);
     const [newName, setNewName] = useState(userProfile?.name);
+    const [newPassword, setNewPassword] = useState("");
     const [verifiedPasswordMessage, setVerifiedPasswordMessage] = useState("");
     const [potentialVerifyPassword, setPotentialVerifyPassword] = useState("");
 
@@ -261,6 +262,10 @@ const HomePage = () => {
 
     const handleChangeEmailClick = () => {
         setNewEmail(userProfile.email);
+        setIsVerifyPassword(true);
+    };
+
+    const handleChangePasswordClick = () => {
         setIsVerifyPassword(true);
     };
 
@@ -529,13 +534,15 @@ const HomePage = () => {
                                 <button className="edit-email" onClick={handleChangeEmailClick}>Change Email</button>
                             </section>
                             <section className="personal-edit-input">
-                                <h3>Password: </h3>
-                                <div>
-                                    *********
-                                </div>
+                                <section className="display-personal-password">
+                                    <h3>Password: </h3>
+                                    <div className="placeholder-pass">
+                                        *********
+                                    </div>
+                                </section>
+                                <button className="edit-password" onClick= {handleChangePasswordClick}>Change Password</button>
                             </section>
                         </section>
-                       
                         <button onClick={handleSavePersonalInfo} className="save-personal-info-button">Save!</button>
                     </>
                 );
