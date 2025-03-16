@@ -24,7 +24,7 @@ locationID = {
 }
 periods = {
     "Stetson_East": {
-        "Breakfast": '67585060c625afb54e6c1e82',
+        "Breakfast": '67585060c625afb54e6c1e74',
         "Lunch": '67585060c625afb54e6c1e82',
         "Dinner": '67585060c625afb54e6c1e6a',
         "Everyday": '67585060c625afb54e6c1e6b',
@@ -52,9 +52,9 @@ def generate_url(location_name, period_name):
     if not location_id or not period_id:
         raise ValueError(f"Invalid location '{location_name}' or period '{period_name}'")
     
-    # Construct URL using the selected location and period
+    # Correct URL to include period_id
     base_url = "https://api.dineoncampus.com/v1/location"
-    url = f"{base_url}/{location_id}/periods"
+    url = f"{base_url}/{location_id}/periods/{period_id}"
     return url
 
 

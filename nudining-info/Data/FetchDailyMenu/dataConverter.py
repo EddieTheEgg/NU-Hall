@@ -10,7 +10,7 @@ periods = ["Breakfast", "Lunch", "Dinner"]
 if len(sys.argv) > 1:
     date = sys.argv[1]
 else:
-    date = '2025-1-11' #Testing date purpose
+    date = '2025-3-15' #Testing date purpose
 
 # Combine all dining options into one CSV file
 all_menu_items = []  # List to hold all menu items
