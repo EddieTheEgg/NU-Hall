@@ -410,11 +410,12 @@
     border: none;
 }
 
-.personal-edit-email {
+.personal-edit-email, .personal-edit-password {
     display: flex;
+    align-items: center;
 }
 
-.edit-email, .edit-userName {
+.edit-email, .edit-userName, .edit-password {
     margin-left: auto;
     min-width: 20vw;
     min-height: 8vh;
@@ -423,4 +424,8 @@
 .passwordVerify-message {
     font-size: 0.7rem;
     color: darkred;
+}
+
+.edit-password {
+    margin-left: auto;
 }

@@ -511,18 +511,18 @@ const HomePage = () => {
                     <>
                         <div>
                             <h2>Personal Information</h2>
-                            <p>Update your personal information here! Remember to save!</p>
+                            <p>Update your personal information here!</p>
                             <hr />
                         </div>
                         <section className = "personal-info-edit">
                             <section className="personal-edit-name">
-                            <section className="display-userName">
-                                 <h3>Name: </h3>
-                                <div>
-                                    {userProfile.name}
-                                </div>
-                            </section>
-                                <button className="edit-userName" onClick={handleChangeNameClick}>Change Name</button>
+                                <section className="display-userName">
+                                    <h3>Name: </h3>
+                                    <div>
+                                        {userProfile.name}
+                                    </div>
+                                </section>
+                                    <button className="edit-userName" onClick={handleChangeNameClick}>Change Name</button>
                             </section>
                             <section className="personal-edit-email">
                                 <section className="display-personal-email">
@@ -533,7 +533,7 @@ const HomePage = () => {
                                 </section>
                                 <button className="edit-email" onClick={handleChangeEmailClick}>Change Email</button>
                             </section>
-                            <section className="personal-edit-input">
+                            <section className="personal-edit-password">
                                 <section className="display-personal-password">
                                     <h3>Password: </h3>
                                     <div className="placeholder-pass">
@@ -543,7 +543,6 @@ const HomePage = () => {
                                 <button className="edit-password" onClick= {handleChangePasswordClick}>Change Password</button>
                             </section>
                         </section>
-                        <button onClick={handleSavePersonalInfo} className="save-personal-info-button">Save!</button>
                     </>
                 );
             default:
