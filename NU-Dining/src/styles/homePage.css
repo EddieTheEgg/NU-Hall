@@ -401,7 +401,7 @@
     outline: none;
 }
 
-.save-newUsername, .verifyPasswordCorrect, .save-newEmail {
+.save-newUsername, .verifyPasswordCorrect, .save-newEmail, .save-newPassword {
     margin-left: auto;
 }
 

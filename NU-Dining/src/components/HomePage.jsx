@@ -23,17 +23,19 @@ const HomePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [reloadData, setReloadData] = useState(false);
     const [newIngredient, setNewIngredient] = useState("");
-    const [editableName, setEditableName] = useState(userProfile?.name);
-    const [editableEmail, setEditableEmail] = useState(userProfile?.email);
-    const [editablePassword, setEditablePassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalOpenEmail, setIsModalOpenEmail] = useState(false);
+    const [isModalOpenPassword, setIsModalOpenPassword] = useState(false);
     const [isVerifyPassword, setIsVerifyPassword] = useState(false);
+    const [isChangingEmail, setIsChangingEmail] = useState(false);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
     const [newEmail, setNewEmail] = useState(userProfile?.email);
     const [newName, setNewName] = useState(userProfile?.name);
     const [newPassword, setNewPassword] = useState("");
+    const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
     const [verifiedPasswordMessage, setVerifiedPasswordMessage] = useState("");
     const [potentialVerifyPassword, setPotentialVerifyPassword] = useState("");
+    const [MatchingNewPasswordMessage, setMatchingNewPasswordMessage] = useState("");
 
     const navigate = useNavigate();
 
@@ -222,38 +224,6 @@ const HomePage = () => {
     };
     
     
-    
-    
-
-    const handleSavePersonalInfo = async () => {
-        const updatedUserProfile = {
-            ...userProfile,
-            name: editableName,
-            email: editableEmail,
-            password: editablePassword,
-        };
-        
-        try {
-            const response = await fetch(`http://localhost:8080/api/users/update/${userProfile.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedUserProfile),
-            });
-    
-            if (response.ok) {
-                const data = await response.json();
-                saveToLocalStorage("userProfile", data);
-                setUserProfile(data);
-                console.log('User information updated successfully');
-            } else {
-                console.error('Error updating user information:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
 
     const handleChangeNameClick = () => {
         setNewName(userProfile.name);
@@ -261,12 +231,13 @@ const HomePage = () => {
     };
 
     const handleChangeEmailClick = () => {
-        setNewEmail(userProfile.email);
+        setIsChangingEmail(true);
         setIsVerifyPassword(true);
     };
 
     const handleChangePasswordClick = () => {
         setIsVerifyPassword(true);
+        setIsChangingPassword(true);
     };
 
     const handleVerifyPasswordCheck = async () => {
@@ -280,11 +251,16 @@ const HomePage = () => {
             });
             if (response.ok) {
                 const isVerified = await response.json();
-                if (isVerified) {
+                if (isVerified && isChangingEmail) {
                     setIsVerifyPassword(false);
                     setIsModalOpenEmail(true);
                     setPotentialVerifyPassword("");
                     setVerifiedPasswordMessage("")
+                } else if (isVerified && isChangingPassword) {
+                    setIsVerifyPassword(false);
+                    setIsModalOpenPassword(true);
+                    setPotentialVerifyPassword("");
+                    setVerifiedPasswordMessage("");
                 } else {
                     setVerifiedPasswordMessage("*Incorrect password. Please try again.");
                 }
@@ -350,8 +326,47 @@ const HomePage = () => {
         } catch (error) {
             console.error('Error:', error);
         }
-        
+        setNewEmail("");
+        setIsChangingEmail(false);
         setIsModalOpenEmail(false);
+    }
+
+    const handleModalSavePassword = async () => {
+        if (newPassword !== newPasswordConfirm) {
+            setMatchingNewPasswordMessage("*Passwords do not match, please try again.")
+            return;
+        } 
+
+        const updatedUserProfile = {
+            ...userProfile,
+            password: newPassword,
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/update/${userProfile.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedUserProfile),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                saveToLocalStorage("userProfile", data);
+                setUserProfile(data);
+                console.log('User information updated successfully');
+            } else {
+                console.error('Error updating user information:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        setMatchingNewPasswordMessage("");
+        setNewPassword("");
+        setNewPasswordConfirm("");
+        setIsChangingPassword(false);
+        setIsModalOpenPassword(false);
     }
 
     const renderContent = () => {
@@ -623,7 +638,9 @@ const HomePage = () => {
                         <button 
                         className="close-verifyPassword" 
                         onClick={() => 
-                        {setIsVerifyPassword(false); 
+                        {setIsVerifyPassword(false);
+                        setIsChangingEmail(false);
+                        setIsChangingPassword(false); 
                         setPotentialVerifyPassword("");}}>
                         ✖</button>
                     </section>
@@ -648,7 +665,12 @@ const HomePage = () => {
                 <div className="modal-content">
                 <section className="modal-topbar-username">
                     <h3>Change Email</h3>
-                    <button className="close-modal" onClick={() => setIsModalOpenEmail(false)}>✖</button>
+                    <button className="close-modal" 
+                    onClick={() => 
+                    {setIsModalOpenEmail(false)
+                    setNewEmail("");
+                    setIsChangingEmail(false)
+                    }}>✖</button>
                 </section>
                 <section className="modal-bottombar-username">
                     <div>Please enter your new email </div>
@@ -657,11 +679,48 @@ const HomePage = () => {
                         type="text" 
                         value={newEmail} 
                         onChange={(e) => setNewEmail(e.target.value)} 
-                        placeholder= {userProfile.email} 
+                        placeholder= "example@email.com"
                         />
                     <button className= "save-newEmail"onClick={handleModalSaveEmail}>Save</button>
                 </section>
                    
+                </div>
+            </div>
+        )}
+        {isModalOpenPassword && (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                <section className="modal-topbar-username">
+                    <h3>Change Password</h3>
+                    <button className="close-modal" 
+                    onClick={() => 
+                    {setIsModalOpenPassword(false)
+                    setNewPassword("");
+                    setNewPasswordConfirm("");
+                    setIsChangingPassword(false)
+                    }}>✖</button>
+                </section>
+                    <section className="modal-bottombar-username">
+                        <div>Enter a new password </div>
+                        <input 
+                            className="edit-nameInput"
+                            type="password" 
+                            value={newPassword} 
+                            onChange={(e) => setNewPassword(e.target.value)} 
+                            placeholder= "*********" 
+                            />                
+                        <div>Enter your new password again</div>
+                        <div className="passwordVerify-message">{MatchingNewPasswordMessage}</div>
+                        <input 
+                            className="edit-nameInput"
+                            type="password" 
+                            value={newPasswordConfirm} 
+                            onChange={(e) => setNewPasswordConfirm(e.target.value)} 
+                            placeholder= "*********" 
+                            />
+                        <button className= "save-newPassword"onClick={handleModalSavePassword}>Save</button>
+                    </section>
+                    
                 </div>
             </div>
         )}
