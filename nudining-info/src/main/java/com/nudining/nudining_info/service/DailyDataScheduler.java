@@ -98,10 +98,12 @@ public class DailyDataScheduler {
     public void alterTableColumns() {
         String alterIngredientsColumn = "ALTER TABLE daily_menu ALTER COLUMN ingredients TYPE TEXT;";
         String alterDescriptionColumn = "ALTER TABLE daily_menu ALTER COLUMN description TYPE TEXT;";
+        String alterAllergensColumn = "ALTER TABLE daily_menu ALTER COLUMN allergens TYPE TEXT;";
 
         try {
             jdbcTemplate.update(alterIngredientsColumn);
             jdbcTemplate.update(alterDescriptionColumn);
+            jdbcTemplate.update(alterAllergensColumn);
             System.out.println("Columns 'ingredients' and 'description' successfully altered to TEXT type.");
         } catch (Exception e) {
             System.err.println("Error altering table columns: " + e.getMessage());
