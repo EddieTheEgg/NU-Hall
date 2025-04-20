@@ -153,5 +153,11 @@ public class UserController {
                 User updatedUser = userService.saveUser(user);
                 return ResponseEntity.ok(updatedUser);
             }
-    
+
+    @GetMapping("/checkEmail/{email}")
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<Boolean> checkEmailExists(@PathVariable String email) {
+        Optional<User> existingUser = userService.findUserByEmail(email);
+        return ResponseEntity.ok(existingUser.isPresent());
+    }
 } 

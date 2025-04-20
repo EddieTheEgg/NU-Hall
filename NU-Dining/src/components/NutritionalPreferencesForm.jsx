@@ -10,6 +10,7 @@ const NutritionalPreferencesForm = () => {
     const [nutrition, setNutrition] = useState({});
     const [selectedNutrients, setSelectedNutrients] = useState({}); 
     const navigate = useNavigate();
+    const [userProfile, setUserProfile] = useState(null);
 
     const nutrients = [
         "Calories",
@@ -37,6 +38,13 @@ const NutritionalPreferencesForm = () => {
         setNutrition(signupData.nutritionalFocus || {});
     }, [signupData]);
 
+    useEffect(() => {
+        const storedData = localStorage.getItem('userProfile');
+        if (storedData) {
+            setUserProfile(JSON.parse(storedData));
+        }
+    }, []);
+
     const handleButtonClick = (nutrient) => {
         setNutrition((prev) => ({
             ...prev,
@@ -57,28 +65,41 @@ const NutritionalPreferencesForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formattedNutrition = Object.entries(nutrition)
-            .filter(([_, value]) => value)
-            .reduce(
-                (acc, [key, value]) => ({
-                    ...acc,
-                    [key]: { min: parseInt(value.min, 10), max: parseInt(value.max, 10) },
-                }),
-                {}
-            );
-
-        const finalData = {
-            ...signupData,
-            nutritionalFocus: formattedNutrition,
-        };
+        
+        // Format the nutrition data correctly
+        const formattedNutrition = {};
+        
+        // Only include nutrients that have been selected and have values
+        Object.entries(nutrition).forEach(([nutrient, values]) => {
+            if (values && (values.min !== "" || values.max !== "")) {
+                formattedNutrition[nutrient] = {
+                    min: values.min ? parseFloat(values.min) : 0,
+                    max: values.max ? parseFloat(values.max) : 0
+                };
+            }
+        });
 
         try {
-            await axios.post("http://localhost:8080/api/users/addUser", finalData);
-            setSignupData(finalData); 
-            saveToLocalStorage("userProfile", finalData);
-            navigate('/home'); 
+            const response = await axios.put(
+                `http://localhost:8080/api/users/updateNutritionFocus/${userProfile.email}`,
+                formattedNutrition,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (response.data) {
+                localStorage.setItem('userProfile', JSON.stringify(response.data));
+                navigate('/home');
+            }
         } catch (error) {
-            console.error("Signup error:", error);
+            console.error("Error updating nutritional preferences:", error);
+            if (error.response) {
+                console.log('Error response data:', error.response.data);
+                console.log('Error response status:', error.response.status);
+            }
         }
     };
 

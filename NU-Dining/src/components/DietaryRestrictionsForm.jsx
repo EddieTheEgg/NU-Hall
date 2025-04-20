@@ -5,6 +5,7 @@ import "../styles/dietaryform.css";
 import { IoCheckmarkCircle, IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { LuCirclePlus } from "react-icons/lu";
 import { MdNoFood } from "react-icons/md";
+import axios from "axios";
 
 const DietaryRestrictionsForm = () => {
     const { setSignupData, signupData } = useSignup();
@@ -14,7 +15,7 @@ const DietaryRestrictionsForm = () => {
     const [restrictedIngredients, setRestrictedIngredients] = useState([]);
     const [newIngredient, setNewIngredient] = useState("");
     const navigate = useNavigate();
-
+    const [userProfile, setUserProfile] = useState(null);
 
     useEffect(() => {
         setAllergies(signupData.dietaryRestrictions?.allergies || []);
@@ -23,6 +24,12 @@ const DietaryRestrictionsForm = () => {
         setRestrictedIngredients(signupData.dietaryRestrictions?.restrictedIngredients || []);
     }, [signupData]);
 
+    useEffect(() => {
+        const storedData = localStorage.getItem('userProfile');
+        if (storedData) {
+            setUserProfile(JSON.parse(storedData));
+        }
+    }, []);
 
     const handleCheckboxChange = (setState, value) => () => {
         setState((prev) => 
@@ -32,7 +39,7 @@ const DietaryRestrictionsForm = () => {
         ); 
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const dietaryRestrictions = {
             allergies,
@@ -43,12 +50,23 @@ const DietaryRestrictionsForm = () => {
 
         console.log("Submitting dietary restrictions:", dietaryRestrictions);
 
-        setSignupData((prevData) => ({
-            ...prevData,
-            dietaryRestrictions,
-        }));
+        try {
+            const response = await axios.put(
+                `http://localhost:8080/api/users/updateDietaryRestrictions/${userProfile.email}`,
+                dietaryRestrictions
+            );
 
-        navigate('/nutritional-goals');
+            if (response.data) {
+                localStorage.setItem('userProfile', JSON.stringify(response.data));
+                setSignupData((prevData) => ({
+                    ...prevData,
+                    ...response.data
+                }));
+                navigate('/nutritional-goals');
+            }
+        } catch (error) {
+            console.error("Error updating dietary restrictions:", error);
+        }
     };
 
     const isSelected = (item, selectedItems) => selectedItems.includes(item);

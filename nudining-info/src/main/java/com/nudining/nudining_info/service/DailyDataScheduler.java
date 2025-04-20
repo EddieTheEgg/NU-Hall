@@ -28,7 +28,7 @@ public class DailyDataScheduler {
     private String databasePass;
 
     //Main Daily Data Method
-    @Scheduled(cron = "0 * * * * ?") // Run at midnight every day
+    @Scheduled(cron = "0 0 0 * * ?") // Run at midnight every day
     public void fetchAndImportData() {
         try {
             String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-M-d"));

@@ -51,9 +51,9 @@ const MealPreferencesForm = ({ onSubmit }) => {
                 };
 
                 const locationsWithTodayHours = result.the_locations.filter(location => 
-                    desiredLocations.includes(location.name) //filter the locations to just the three desired locations first
+                    desiredLocations.includes(location.name)
                 ).map(location => {
-                    const today = location.week.find(day => day.date === todayDate); //for each location, find the relevant date only
+                    const today = location.week.find(day => day.date === todayDate);
                     
                     // Format the operating hours for each location
                     const formattedHours = today.hours.map(hour => {
@@ -85,7 +85,7 @@ const MealPreferencesForm = ({ onSubmit }) => {
         };
         fetchLocations();
 
-        const intervalId = setInterval(fetchLocations, 60000); // Fetch every 60 seconds
+        const intervalId = setInterval(fetchLocations, 60000); 
 
         return () => clearInterval(intervalId); 
     }, []); 

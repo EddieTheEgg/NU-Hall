@@ -50,7 +50,11 @@
 }
 
 .input-box-signup input::placeholder {
-    color: white;
+    color: grey;
+}
+
+.emailFoundMessage {
+    font-size: 0.85rem;
 }
 
 

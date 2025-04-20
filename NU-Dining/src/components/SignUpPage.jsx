@@ -4,12 +4,14 @@ import { useSignup } from '../context/SignupContext.jsx';
 import { FaUser, FaLock } from "react-icons/fa";
 import { FaUserPen } from "react-icons/fa6";
 import "../styles/signupform.css"; 
+import axios from 'axios';
 
 const SignUpPage = () => {
     const { signupData, setSignupData } = useSignup();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailAlreadyFound, setEmailAlreadyFound] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,15 +21,41 @@ const SignUpPage = () => {
         setPassword(signupData.password || '');
     }, [signupData]);
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        setSignupData((prevData) => ({
-            ...prevData,
-            name,
-            email,
-            password,
-        }));
-        navigate('/dietary-restrictions');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const checkEmailResponse = await axios.get(`http://localhost:8080/api/users/checkEmail/${email}`);
+            
+            if (checkEmailResponse.data === true) {
+                setEmailAlreadyFound('This email was already signed up! Try logging in?');
+                return;
+            }
+
+            // Create new user with required fields
+            const newUser = {
+                name: name,
+                email: email,
+                password: password,
+                dietaryRestrictions: {
+                    allergies: [],
+                    proteinPreferences: [],
+                    lifestylePreferences: [],
+                    restrictedIngredients: []
+                },
+                nutritionalFocus: {}
+            };
+            const signupResponse = await axios.post('http://localhost:8080/api/users/addUser', newUser);
+            if (signupResponse.data) {
+                localStorage.setItem('userProfile', JSON.stringify(signupResponse.data));
+                setSignupData((prevData) => ({
+                    ...prevData,
+                    ...signupResponse.data
+                }));
+                navigate('/dietary-restrictions');
+            }
+        } catch (error) {
+            console.error("Error during signup:", error.response?.data || error.message);
+        }
     };
 
     const handleReturnLogin = () => {
@@ -58,6 +86,7 @@ const SignUpPage = () => {
                     />
                     <FaUser className="icon"/>
                 </div>
+                <div className = "emailFoundMessage">{emailAlreadyFound}</div>
                 <div className="input-box-signup">
                     <input
                         type="password"
