@@ -18,6 +18,10 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
         @Param("kitchens") ArrayList<String> kitchens
     );
     
-
+    @Query("SELECT DISTINCT m.kitchen FROM Meal m WHERE m.period = :period AND m.location = :location")
+    ArrayList<String> findUniqueKitchensByPeriodAndLocation(
+        @Param("period") String period,
+        @Param("location") String location
+    );
     
 }

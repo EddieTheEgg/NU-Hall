@@ -48,7 +48,21 @@ public class MealController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
     }
-
+    
+    @CrossOrigin(origins = "http://localhost:5173")
+    @GetMapping("/kitchens/{period}/{location}")
+    public ResponseEntity<List<String>> getUniqueKitchens(
+            @PathVariable String period,
+            @PathVariable String location) {
+        try {
+            List<String> kitchens = mealService.getUniqueKitchensByPeriodAndLocation(period, location);
+            return ResponseEntity.ok(kitchens);
+        } catch (Exception e) {
+            System.err.println("Error fetching unique kitchens: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+}
 
 
     // Purpose:
@@ -96,6 +110,5 @@ public class MealController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
+    }
     */
-}

@@ -181,4 +181,7 @@ public class MealService {
     }
      */
   
+    public ArrayList<String> getUniqueKitchensByPeriodAndLocation(String period, String location) {
+        return mealRepository.findUniqueKitchensByPeriodAndLocation(period, location);
+    }
 } 
