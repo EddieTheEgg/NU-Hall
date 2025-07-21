@@ -37,8 +37,8 @@ for location in locations:
                 continue
 
             menu = data.get("menu", {})
-            periods_data = menu.get("periods", {})
-            categories = periods_data.get("categories", [])
+            period_data = menu.get("period", {}) #Changed from periods to period for new apiv4
+            categories = period_data.get("categories", [])
 
             if not categories:
                 print(f"No menu categories found for {location} during {period}, skipping...")

@@ -1,10 +1,12 @@
 import requests
 import json
 import time
+from datetime import datetime
+import urllib.parse
 
 headers = {
     'Accept': 'application/json, text/plain, */*',
-    'Accept-Encoding': 'gzip, deflate, br',  # Indicate that we expect Brotli encoding
+    'Accept-Encoding': 'gzip, deflate',  # Removed Brotli to fix decompression issues
     'Accept-Language': 'en-US,en;q=0.9',
     'Origin': 'https://nudining.com',
     'Referer': 'https://nudining.com/',
@@ -24,13 +26,14 @@ locationID = {
 }
 periods = {
     "Stetson_East": {
-        "Breakfast": '67585060c625afb54e6c1e74',
-        "Lunch": '67585060c625afb54e6c1e82',
-        "Dinner": '67585060c625afb54e6c1e6a',
-        "Everyday": '67585060c625afb54e6c1e6b',
+        "Breakfast": '68238e038443cceeae45c310',
+        "Lunch": '68238e038443cceeae45c31d',
+        "Dinner": '68238e038443cceeae45c307',
+        "Everyday": '68238e038443cceeae45c308',
     },
 
     "Stetson_West" : {
+        "Breakfast": '67c5af33351d530597ac7568',
         "Lunch": '677208f1c625af05f6230b74',
         "Dinner": '677208f1c625af05f6230b7e',
         "Everyday": '677208f1c625af05f6230b7f'
@@ -52,22 +55,40 @@ def generate_url(location_name, period_name):
     if not location_id or not period_id:
         raise ValueError(f"Invalid location '{location_name}' or period '{period_name}'")
     
-    # Correct URL to include period_id
-    base_url = "https://api.dineoncampus.com/v1/location"
+    # Updated URL for API v4
+    base_url = "https://apiv4.dineoncampus.com/locations"
     url = f"{base_url}/{location_id}/periods/{period_id}"
     return url
 
 
 
+def format_date_for_api(date_str):
+    """Convert date string like '2025-7-21' to API v4 format"""
+    try:
+        # Parse the date string (format: YYYY-M-D)
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+        # Format as full datetime string for API v4
+        formatted_date = date_obj.strftime('%a %b %d %Y 00:00:00 GMT-0400 (Eastern Daylight Time)')
+        return formatted_date
+    except ValueError:
+        try:
+            # Try alternate format YYYY-M-D
+            date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+            formatted_date = date_obj.strftime('%a %b %d %Y 00:00:00 GMT-0400 (Eastern Daylight Time)')
+            return formatted_date
+        except ValueError:
+            # Return original if parsing fails
+            return date_str
+
 def fetch_data(location_name, period_name, date):
     try:
         url = generate_url(location_name, period_name)
+        formatted_date = format_date_for_api(date)
         params = {
-            'platform': 0,
-            'date': date,
+            'date': formatted_date,
         }
 
-        response = requests.get(url, headers=headers, params=params, timeout=10)
+        response = requests.get(url, headers=headers, params=params, timeout=30)
         response.raise_for_status()
         return response.json()
                 
